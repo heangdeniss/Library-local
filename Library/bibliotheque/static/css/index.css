@@ -30,3 +30,7 @@
     height: 3rem;
     border-radius: 0.75rem;
   }
+
+#home{
+  position: absolute;
+}
