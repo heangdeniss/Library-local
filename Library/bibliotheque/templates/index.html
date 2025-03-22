@@ -8,49 +8,51 @@
     <link rel="stylesheet" href="../static/css/index.css">
 </head>
 <body>
-    <!--Header-->
-    <section id="home" class="gradient-background">
-        <div class="container" >
-        <header class="p-3 mb-3 border-bottom">
-            <div class="container">
+ <!--Header--> 
+<section id="home" class="gradient-background display-fixed" style="position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;">
+  <div class="container">
+      <header class="p-3 mb-3 border-bottom">
+          <div class="container">
               <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <a class="navbar-brand" href="https://www.google.com/maps/place/Institute+of+Technology+of+Cambodia/@11.5703953,104.8980518,20z/data=!4m6!3m5!1s0x3109517388680e15:0x63057e6682968f5!8m2!3d11.5703975!4d104.8980857!16zL20vMDZ5dmhz?entry=ttu&g_ep=EgoyMDI1MDMxOC4wIKXMDSoJLDEwMjExNDU1SAFQAw%3D%3D"><img src="../static/images/book-half.svg" alt="Library" height="20"> Library</a>
-        
-                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0" class="top-bar">
-                    <li><a href="#home" class="nav-link px-2 link-body-emphasis">Home</a></li>
-                  <li><a href="#feature" class="nav-link px-2 link-body-emphasis">Overview</a></li>
-                  <li><a href="#" class="nav-link px-2 link-body-emphasis">Inventory</a></li>
-                  <li><a href="#" class="nav-link px-2 link-body-emphasis">Books</a></li>
-                  <li><a href="{% url 'login_register' %}" class="nav-link px-2 link-body-emphasis">log In</a></li>
-                  <li><a href="#" class="nav-link px-2 link-body-emphasis">Sign Up</a></li>
-                </ul>
-        
-                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                  <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-                </form>
-        
-                <div class="dropdown text-end">
-                  <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="../static/images/Killau.png" alt="profile image" width="32" height="32" class="rounded-circle">
+                  <a class="navbar-brand" href="https://www.google.com/maps/place/Institute+of+Technology+of+Cambodia/@11.5703953,104.8980518,20z/data=!4m6!3m5!1s0x3109517388680e15:0x63057e6682968f5!8m2!3d11.5703975!4d104.8980857!16zL20vMDZ5dmhz?entry=ttu&g_ep=EgoyMDI1MDMxOC4wIKXMDSoJLDEwMjExNDU1SAFQAw%3D%3D">
+                      <img src="../static/images/book-half.svg" alt="Library" height="25"> Library
                   </a>
-                  <ul class="dropdown-menu text-small">
-                    <li><a class="dropdown-item" href="#">New project...</a></li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#">Sign out</a></li>
+                  <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0" class="top-bar">
+                      <li><a href="#home" class="nav-link px-2 link-body-emphasis">Home</a></li>
+                      <li><a href="#feature" class="nav-link px-2 link-body-emphasis">Overview</a></li>
+                      <li><a href="#" class="nav-link px-2 link-body-emphasis">Inventory</a></li>
+                      <li><a href="{% url 'books' %}" class="nav-link px-2 link-body-emphasis">Books</a></li>
+                      <li><a href="{% url 'login_register' %}" class="nav-link px-2 link-body-emphasis">log In</a></li>
+                      <li><a href="{% url 'login_register' %}" class="nav-link px-2 link-body-emphasis">Sign Up</a></li>
+                      <li><a href="{% url 'subcribe' %}" class="nav-link px-2 link-body-emphasis">Subcribe</a></li>
                   </ul>
-                </div>
+
+                  <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                      <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
+                  </form>
+
+                  <div class="dropdown text-end">
+                      <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                          <img src="../static/images/Killau.png" alt="profile image" width="32" height="32" class="rounded-circle">
+                      </a>
+                      <ul class="dropdown-menu text-small">
+                          <li><a class="dropdown-item" href="#">New project...</a></li>
+                          <li><a class="dropdown-item" href="#">Settings</a></li>
+                          <li><a class="dropdown-item" href="#">Profile</a></li>
+                          <li><hr class="dropdown-divider"></li>
+                          <li><a class="dropdown-item" href="#">Sign out</a></li>
+                      </ul>
+                  </div>
               </div>
-            </div>
-        </div>
-          </header>
-    </section>
+          </div>
+      </header>
+  </div>
+</section>
 
     <section>
         <div class="container">
         <div class="px-4 pt-5 mt-5 text-center border-bottom">
-            <h1 class="display-4 fw-bold text-body-emphasis">Welcome to Library AMS Your Digital Gateway to Knowledge!</h1>
+            <h1 class="display-4 fw-bold text-body-emphasis">Welcome to AMS Library Your Digital Gateway to Knowledge!</h1>
             <div class="col-lg-6 mx-auto">
               <p class="lead mb-4">Explore thousands of books, manage your account, and access library services online.</p>
               <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
@@ -134,75 +136,7 @@
           </div>
     </section>
 
-    <!-- Pricing -->
-  <section id="pricing">
 
-    <div class="container">
-      <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-        <h2 class="display-4 fw-normal">A Plan for Membership</h2>
-        <p class="fs-5 text-body-secondary">Simple and affordable price plans for a good quality and Trustworthy Library.
-      </div>
-      <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
-        <div class="col">
-          <div class="card mb-4 rounded-3 shadow-sm">
-            <div class="card-header py-3">
-              <h4 class="my-0 fw-normal">📖 Free</h4>
-            </div>
-            <div class="card-body">
-              <h1 class="card-title pricing-card-title">$0<small class="text-body-secondary fw-light">/mo</small></h1>
-              <ul class="list-unstyled mt-3 mb-4">
-                <li>✅ Borrow up to 2 books per month</li>
-                <li>✅ Access to public domain e-books</li>
-                <li>✅ Limited access to online resources</li>
-                <li>✅ Participation in free library events</li>
-                <li>❌ No priority support</li>
-                <li>❌ No premium e-books or audiobooks</li>
-              </ul>
-              <button type="button" class="w-100 btn btn-lg btn-outline-white">Sign up for free</button>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card mb-4 rounded-3 shadow-sm">
-            <div class="card-header py-3">
-              <h4 class="my-0 fw-normal">📚 Standard</h4>
-            </div>
-            <div class="card-body">
-              <h1 class="card-title pricing-card-title">$15<small class="text-body-secondary fw-light">/mo</small></h1>
-              <ul class="list-unstyled mt-3 mb-4">
-                <li>✅ Borrow up to 5 books per month</li>
-                <li>✅ Access to full digital library (e-books, audiobooks)</li>
-                <li>✅ Unlimited access to online resources</li>
-                <li>✅ Priority event registration</li>
-                <li>✅ Extended borrowing duration</li>
-                <li>❌ No priority customer support</li>
-              </ul>
-              <button type="button" class="w-100 btn btn-lg btn-white">Get started</button>
-            </div>
-          </div>
-        </div>
-        <div class="col" data-bs-theme="white">
-          <div class="card mb-4 rounded-3 shadow-sm border-white">
-            <div class="card-header py-3 text-bg-dark border-white">
-              <h4 class="my-0 fw-normal">💎 Premium</h4>
-            </div>
-            <div class="card-body">
-              <h1 class="card-title pricing-card-title">$29<small class="text-body-secondary fw-light">/mo</small></h1>
-              <ul class="list-unstyled mt-3 mb-4">
-                <li>✅ Unlimited book borrowing</li>
-                <li>✅ Access to premium e-books & audiobooks</li>
-                <li>✅ Exclusive library events & workshops</li>
-                <li>✅ Personalized book recommendations</li>
-                <li>✅ 24/7 priority customer support</li>
-                <li>✅ Home delivery for physical books (if applicable)</li>
-              </ul>
-              <button type="button" class="w-100 btn btn-lg btn-white">Get Started</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <section>
         <!--Footer-->
     <section class="gradient-background">
         <div class="container">
@@ -211,7 +145,7 @@
                 <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
                   <svg class="bi" width="35" height="30"><use xlink:href="#bootstrap"></use></svg>
                 </a>
-                <span class="mb-3 mb-md-0 text-body-secondary">© 2025 Library AMS, Inc</span>
+                <span class="mb-3 mb-md-0 text-body-secondary">© 2025 AMS Library, Inc</span>
               </div>
           
               <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
