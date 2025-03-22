@@ -13,3 +13,9 @@ def quote(request):
 
 def contact(request):
     return render(request, "contact.html")
+
+def subcribe(request): 
+    return render(request, "subcribe.html")
+
+def books(request):
+    return render(request, "books.html")
