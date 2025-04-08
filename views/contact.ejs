@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>contact us</title>
+    <link rel="stylesheet" href="styles/contact.css">
+</head>
+<body>
+    <form action="/submit" method="POST">
+        <h1>Contact Me</h1>
+        
+        <% if (typeof success !== 'undefined') { %>
+          <p style="text-align:center;color:whitesmoke;margin-bottom:10px;">
+            Thanks, <%= name %>! Your message has been received.
+          </p>
+        <% } %>
+    
+        <input name="name" type="text" class="feedback-input" placeholder="Name" required />
+        <input name="email" type="email" class="feedback-input" placeholder="Email" required />
+        <textarea name="text" class="feedback-input" placeholder="Comment" required></textarea>
+        <input type="submit" value="SUBMIT" />
+    </form>
+    
+</body>
+</html>

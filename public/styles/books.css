@@ -1,0 +1,136 @@
+body {
+    background: linear-gradient(45deg, #FF6F61, #6A11CB, #2575FC);
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+}
+
+/* Header Section */
+.header {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: linear-gradient(45deg, #FF6F61, #6A11CB, #2575FC);
+    color: white;
+}
+
+.header h1 {
+    font-size: 3rem;
+    margin: 0;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.header p {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+}
+
+/* analysis and statistic*/
+.Analysis {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 2rem;
+}
+
+.book-item {
+    position: relative;
+    height: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.book-item:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.book-item .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.book-item:hover .overlay {
+    opacity: 1;
+}
+
+.book-item h2 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.book-item p {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+}
+
+/* Background Images */
+.analysis {
+    background-image: url(../images/fundamentals-of-statistics-cover.png);
+    background-size: cover;
+    background-position: center;
+}
+
+.ml-ai {
+    background-image: url(../images/324bs_ArtificialIntelligenceMachineLearning-cover.webp);
+    background-size: cover;
+    background-position: center;
+}
+
+.big-data {
+    background-image: url(../images/Big-data-jawfakhwbfawhfvaawdawfawfaw442834-cover.png);
+    background-size: cover;
+    background-position: center;
+}
+
+.visualization {
+    background-image: url(../images/845-visualization-cover.webp);
+    background-size: cover;
+    background-position: center;
+}
+
+.DED {
+    background-image: url(../images/Five.Co-The-MySQL-cover.png);
+    background-size: cover;
+    background-position: center;
+}
+
+.DLNN {
+    background-image: url(../images/Deep-Learning-and-Neural-Networks-a-detailed-analysis-Banner-cover.png);
+    background-size: cover;
+    background-position: center;
+}
+
+/* Return Button */
+.return-btn-container {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.return-btn {
+    background: whitesmoke;
+    color: black;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.return-btn:hover {
+    background: whitesmoke;
+}
