@@ -1,3 +1,8 @@
-body{
-    background: linear-gradient(45deg, #FF6F61, #6A11CB, #2575FC);
+/* body{
+    /* background: linear-gradient(45deg, #FF6F61, #6A11CB, #2575FC); */
+body {
+    background-color: whitesmoke;
+}
+.header {
+    padding-bottom: 10vh;
 }

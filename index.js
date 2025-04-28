@@ -11,6 +11,10 @@ app.get("/", (req, res) => {
     res.render("index.ejs");
   });
 
+app.get("/index1", (req, res) => {
+    res.render("index1.ejs")
+})
+
 // display login form
 app.get("/login", (req, res) => {
     res.render("login.ejs");

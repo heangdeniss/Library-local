@@ -1,11 +1,11 @@
-body {
+/* body {
   background: linear-gradient(45deg, #FF6F61, #6A11CB, #2575FC);
 }
 .gradient-background {
     background: linear-gradient(300deg, #00c6ff, #0072ff, #ff4c68);
     background-size: 180% 180%;
     animation: gradient-animation 18s ease infinite;
-  }
+  } */
   
   @keyframes gradient-animation {
     0% {
