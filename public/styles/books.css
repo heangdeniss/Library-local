@@ -9,7 +9,7 @@ body {
     text-align: center;
     padding: 3rem 1rem;
     background-color: black;
-    color: red;
+    color: whitesmoke;
     transition: background-image 1s ease-in-out;
     background-size: cover;
     background-position: center center;
@@ -18,13 +18,13 @@ body {
 }
 
 .header h1 {
-    font-size: 3rem;
+    font-size: 5rem;
     margin: 0;
     text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .header p {
-    font-size: 1.2rem;
+    font-size: 2.5rem;
     margin-top: 1rem;
 }
 
