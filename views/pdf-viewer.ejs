@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= book.title %> | PDF Viewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/pdf-viewer.css">
+    <link rel="stylesheet" href="/styles/sub.css">
+    <!-- PDF.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script>
+        // Setting the workerSrc for PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="pdf-container">
+            <div class="pdf-meta">
+                <h2><%= book.title %></h2>
+                <p><strong>Author:</strong> <%= book.author %></p>
+                <p><strong>Category:</strong> <%= categoryName %></p>
+                <% if (book.description) { %>
+                    <p><strong>Description:</strong> <%= book.description %></p>
+                <% } %>
+                <p><strong>Uploaded:</strong> <%= new Date(book.upload_date).toLocaleDateString() %></p>
+            </div>
+
+            <!-- PDF.js Controls (will be hidden if PDF.js fails) -->
+            <div class="pdf-controls" id="pdf-js-controls">
+                <div class="page-navigation">
+                    <button id="prev" class="nav-btn">Previous</button>
+                    <span id="page-info">Page <span id="page-num">1</span> of <span id="page-count">0</span></span>
+                    <button id="next" class="nav-btn">Next</button>
+                </div>
+                <div class="zoom-controls">
+                    <button id="zoom-out" class="zoom-btn">-</button>
+                    <span id="zoom-level">100%</span>
+                    <button id="zoom-in" class="zoom-btn">+</button>
+                </div>
+                <div class="view-mode">
+                    <button id="fullscreen-btn" class="mode-btn">Fullscreen</button>
+                </div>
+            </div>
+
+            <div class="pdf-viewer-container">
+                <!-- PDF.js Canvas Viewer (hidden if fails) -->
+                <div id="pdf-js-view" class="pdf-viewer">
+                    <canvas id="pdf-canvas"></canvas>
+                    <div id="pdf-loading" class="loading-indicator">Loading PDF...</div>
+                </div>
+                  <!-- Fallback native browser viewer (hidden by default) -->
+                <div id="native-pdf-view" class="pdf-viewer" style="display: none;">
+                    <object class="pdf-object" data="/serve-pdf/<%= book.id %>" type="application/pdf" width="100%" height="800px">
+                        <p>Your browser does not support embedded PDFs. 
+                            <a href="/serve-pdf/<%= book.id %>">Download the PDF</a> instead.
+                        </p>
+                    </object>
+                </div>
+            </div>
+            
+            <div class="pdf-actions">
+                <a href="/serve-pdf/<%= book.id %>" download class="download-btn">Download PDF</a>
+                <button id="bookmark-btn" class="bookmark-btn">Save Bookmark</button>
+                <button class="return-btn" onclick="window.location.href='/<%= categoryPath %>'">Back to Category</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>        // PDF.js implementation
+        const url = '/serve-pdf/<%= book.id %>';
+        let pdfDoc = null;
+        let pageNum = 1;
+        let pageRendering = false;
+        let pageNumPending = null;
+        let scale = 1.0;
+        const canvas = document.getElementById('pdf-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        console.log('Attempting to load PDF from:', url);
+        console.log('Book details:', {
+            id: '<%= book.id %>',
+            title: '<%= book.title %>',
+            filePath: '<%= book.file_path %>'
+        });
+        
+        // Get stored bookmark for this book if available
+        const bookId = '<%= book.id %>';
+        const storedPage = localStorage.getItem(`bookmark_${bookId}`);
+        if (storedPage) {
+            pageNum = parseInt(storedPage, 10);
+        }
+        
+        /**
+         * Get page info from document, resize canvas accordingly, and render page.
+         * @param num Page number.
+         */
+        function renderPage(num) {
+            pageRendering = true;
+            
+            // Update page counters
+            document.getElementById('page-num').textContent = num;
+            
+            // Using promise to fetch the page
+            pdfDoc.getPage(num).then(function(page) {
+                const viewport = page.getViewport({scale: scale});
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                
+                // Render PDF page into canvas context
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                const renderTask = page.render(renderContext);
+                
+                // Wait for rendering to finish
+                renderTask.promise.then(function() {
+                    pageRendering = false;
+                    if (pageNumPending !== null) {
+                        // New page rendering is pending
+                        renderPage(pageNumPending);
+                        pageNumPending = null;
+                    }
+                });
+            });
+        }
+        
+        /**
+         * If another page rendering in progress, waits until the rendering is
+         * finished. Otherwise, executes rendering immediately.
+         */
+        function queueRenderPage(num) {
+            if (pageRendering) {
+                pageNumPending = num;
+            } else {
+                renderPage(num);
+            }
+        }
+        
+        /**
+         * Displays previous page.
+         */
+        function onPrevPage() {
+            if (pageNum <= 1) {
+                return;
+            }
+            pageNum--;
+            queueRenderPage(pageNum);
+        }
+        
+        /**
+         * Displays next page.
+         */
+        function onNextPage() {
+            if (pageNum >= pdfDoc.numPages) {
+                return;
+            }
+            pageNum++;
+            queueRenderPage(pageNum);
+        }
+        
+        /**
+         * Zooms in, increasing the scale by 0.1
+         */
+        function zoomIn() {
+            scale += 0.1;
+            document.getElementById('zoom-level').textContent = Math.round(scale * 100) + '%';
+            queueRenderPage(pageNum);
+        }
+        
+        /**
+         * Zooms out, decreasing the scale by 0.1
+         */
+        function zoomOut() {
+            if (scale <= 0.2) return;
+            scale -= 0.1;
+            document.getElementById('zoom-level').textContent = Math.round(scale * 100) + '%';
+            queueRenderPage(pageNum);
+        }
+        
+        /**
+         * Toggles fullscreen mode
+         */
+        function toggleFullscreen() {
+            const viewer = document.querySelector('.pdf-viewer');
+            if (!document.fullscreenElement) {
+                viewer.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        /**
+         * Saves the current page as a bookmark
+         */
+        function saveBookmark() {
+            localStorage.setItem(`bookmark_${bookId}`, pageNum);
+            alert(`Bookmark saved at page ${pageNum}`);
+        }
+        
+        /**
+         * Switch to native browser PDF viewer
+         */
+        function switchToNativePdfViewer() {
+            // Hide PDF.js viewer and controls
+            document.getElementById('pdf-js-view').style.display = 'none';
+            document.getElementById('pdf-js-controls').style.display = 'none';
+            document.getElementById('bookmark-btn').style.display = 'none';
+            
+            // Show native PDF viewer
+            document.getElementById('native-pdf-view').style.display = 'block';
+            
+            console.log('Switched to native PDF viewer');
+        }
+          // Try to load with PDF.js first
+        const loadPdfWithPdfJs = () => {
+            // Show the loading indicator
+            document.getElementById('pdf-loading').style.display = 'block';
+            
+            // Check if URL is valid
+            if (!url || url === '/undefined' || url === '/null') {
+                console.error('Invalid PDF URL:', url);
+                switchToNativePdfViewer();
+                return;
+            }
+            
+            // Try loading with PDF.js
+            pdfjsLib.getDocument({
+                url: url,
+                withCredentials: true,
+                cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/cmaps/',
+                cMapPacked: true,
+            }).promise.then(function(pdfDoc_) {
+                pdfDoc = pdfDoc_;
+                document.getElementById('page-count').textContent = pdfDoc.numPages;
+                
+                // Initial/first page rendering
+                renderPage(pageNum);
+                
+                // Hide loading indicator
+                document.getElementById('pdf-loading').style.display = 'none';
+                
+                // Clear the timeout since loading succeeded
+                clearTimeout(pdfJsTimeout);
+                
+                console.log('PDF successfully loaded with PDF.js');
+            }).catch(function(error) {
+                console.error('Error loading PDF with PDF.js:', error);
+                
+                // Switch to native PDF viewer as fallback
+                switchToNativePdfViewer();
+            });
+        };
+        
+        // Add a timeout in case PDF.js takes too long
+        const pdfJsTimeout = setTimeout(() => {
+            if (!pdfDoc) {
+                console.warn('PDF.js taking too long, switching to native viewer');
+                switchToNativePdfViewer();
+            }
+        }, 5000); // 5 second timeout
+        
+        // Start loading with PDF.js
+        loadPdfWithPdfJs();
+        
+        // Button event listeners
+        document.getElementById('prev').addEventListener('click', onPrevPage);
+        document.getElementById('next').addEventListener('click', onNextPage);
+        document.getElementById('zoom-in').addEventListener('click', zoomIn);
+        document.getElementById('zoom-out').addEventListener('click', zoomOut);
+        document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
+        document.getElementById('bookmark-btn').addEventListener('click', saveBookmark);
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') {
+                onNextPage();
+            } else if (e.key === 'ArrowLeft') {
+                onPrevPage();
+            }
+        });
+    </script>
+</body>
+</html>

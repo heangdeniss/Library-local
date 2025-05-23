@@ -1,20 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Add click event to home pages
-    document.querySelectorAll('.menu-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const url = item.getAttribute('data-url');
-            if (url) {
-                window.location.href = url;
-            }
+    // Add event listener to book-item elements
+    document.querySelectorAll('.book-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const url = item.getAttribute('data-url');  // Get the URL from the data-url attribute
+            window.location.href = url;  // Redirect to the URL stored in data-url
         });
     });
+});
 
     // Handle the Return Button
     const returnButton = document.getElementById('returnButton');
     returnButton.addEventListener('click', () => {
         window.location.href = '/index1'; // Navigate to the index page
     });
-});
+
 
 const header = document.querySelector('.header');
 

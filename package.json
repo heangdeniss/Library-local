@@ -5,7 +5,10 @@
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
-    "mysql2": "^3.14.1"
+    "express-session": "^1.18.1",
+    "multer": "^1.4.5-lts.2",
+    "mysql2": "^3.14.1",
+    "pg": "^8.16.0"
   },
   "name": "capstone-project",
   "version": "1.0.0",
