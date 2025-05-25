@@ -165,6 +165,50 @@ h2::after {
     transform: translateY(-1px);
 }
 
+/* Password input container styling */
+.password-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-container input {
+    padding-right: 50px; /* Make room for the toggle button */
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 1.1rem;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+}
+
+.password-toggle:hover {
+    color: #495057;
+    background: rgba(73, 80, 87, 0.1);
+}
+
+.password-toggle:focus {
+    outline: none;
+    color: #495057;
+    background: rgba(73, 80, 87, 0.15);
+}
+
+.password-toggle i {
+    pointer-events: none;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     body {

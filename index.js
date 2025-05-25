@@ -286,18 +286,55 @@ app.get("/book1", requireAuth, (req, res) => {
   res.render("book1.ejs")
 })
 
-app.post("/submit", (req, res) => {
+app.post("/submit", async (req, res) => {
   const { name, email, text } = req.body;
-  console.log("Name:", name);
-  console.log("Email:", email);
-  console.log("Message:", text);
+  
+  // Validate input
+  if (!name || !email || !text) {
+    return res.status(400).render("contact.ejs", { 
+      error: "All fields are required",
+      name: name || '',
+      email: email || '',
+      message: text || ''
+    });
+  }
 
-  res.render("contact.ejs", { 
-    name, 
-    email, 
-    message: text, 
-    success: true 
-  });
+  try {
+    // Get client IP address
+    const clientIp = req.ip || req.connection.remoteAddress || req.socket.remoteAddress || 
+                    (req.connection.socket ? req.connection.socket.remoteAddress : null);
+    
+    // Get user ID if logged in
+    const userId = req.session && req.session.userId ? req.session.userId : null;
+    
+    // Insert contact message into database
+    const result = await query(`
+      INSERT INTO contact_messages (name, email, message, user_id, ip_address) 
+      VALUES ($1, $2, $3, $4, $5) 
+      RETURNING id
+    `, [name, email, text, userId, clientIp]);
+    
+    console.log("Contact message saved with ID:", result[0].id);
+    console.log("Name:", name);
+    console.log("Email:", email);
+    console.log("Message:", text);
+
+    res.render("contact.ejs", { 
+      name, 
+      email, 
+      message: text, 
+      success: true 
+    });
+    
+  } catch (err) {
+    console.error('Error saving contact message:', err);
+    res.render("contact.ejs", { 
+      name, 
+      email, 
+      message: text, 
+      error: "Failed to send message. Please try again."
+    });
+  }
 });
 
 app.get('/admin/dashboard', requireAdminAuth, async (req, res) => {
@@ -1073,6 +1110,109 @@ app.post('/admin/borrowing/settings', requireAdminAuth, async (req, res) => {
 });
 
 // ===== END BORROWING SYSTEM ROUTES =====
+
+// Admin route to view contact messages
+app.get('/admin/contact-messages', requireAdminAuth, async (req, res) => {
+    try {
+        const messages = await query(`
+            SELECT cm.*, u.username as user_name
+            FROM contact_messages cm
+            LEFT JOIN users u ON cm.user_id = u.id
+            ORDER BY cm.created_at DESC
+        `);
+        
+        // Get message statistics
+        const stats = {
+            totalMessages: 0,
+            unreadMessages: 0,
+            repliedMessages: 0,
+            resolvedMessages: 0
+        };
+
+        const totalMessagesResult = await query('SELECT COUNT(*) as count FROM contact_messages');
+        stats.totalMessages = parseInt(totalMessagesResult[0].count);
+
+        const unreadMessagesResult = await query('SELECT COUNT(*) as count FROM contact_messages WHERE status = $1', ['unread']);
+        stats.unreadMessages = parseInt(unreadMessagesResult[0].count);
+
+        const repliedMessagesResult = await query('SELECT COUNT(*) as count FROM contact_messages WHERE status = $1', ['replied']);
+        stats.repliedMessages = parseInt(repliedMessagesResult[0].count);
+
+        const resolvedMessagesResult = await query('SELECT COUNT(*) as count FROM contact_messages WHERE status = $1', ['resolved']);
+        stats.resolvedMessages = parseInt(resolvedMessagesResult[0].count);
+
+        res.render('admin-contact-messages.ejs', { messages, stats });
+    } catch (err) {
+        console.error('Error fetching contact messages:', err);
+        res.render('admin-contact-messages.ejs', { messages: [], stats: {} });
+    }
+});
+
+// Update contact message status
+app.post('/admin/contact-messages/:id/status', requireAdminAuth, async (req, res) => {
+    const { id } = req.params;
+    const { status, admin_notes } = req.body;
+    const adminId = req.session.adminId;
+    
+    try {
+        // Get current message to check previous state
+        const currentMessage = await query('SELECT * FROM contact_messages WHERE id = $1', [id]);
+        
+        if (!currentMessage || currentMessage.length === 0) {
+            return res.status(404).json({ error: 'Message not found' });
+        }
+        
+        let newStatus = status;
+        const hadPreviousNotes = currentMessage[0].admin_notes && currentMessage[0].admin_notes.trim() !== '';
+        const hasNewNotes = admin_notes && admin_notes.trim() !== '';
+        
+        // Auto-update status based on admin actions
+        if (hasNewNotes && !hadPreviousNotes) {
+            // First time admin adds notes - change to 'read' if currently unread
+            if (currentMessage[0].status === 'unread') {
+                newStatus = 'read';
+            }
+        } else if (hasNewNotes && hadPreviousNotes && currentMessage[0].admin_notes !== admin_notes) {
+            // Admin updated notes - could indicate a reply
+            if (currentMessage[0].status === 'read') {
+                newStatus = 'replied';
+            }
+        }
+        
+        // If admin explicitly selected a status, use that instead
+        if (status && status !== currentMessage[0].status) {
+            newStatus = status;
+        }
+        
+        await query(`
+            UPDATE contact_messages 
+            SET status = $1, admin_notes = $2, updated_at = CURRENT_TIMESTAMP, replied_by = $3, replied_at = $4
+            WHERE id = $5
+        `, [newStatus, admin_notes, adminId, newStatus === 'replied' || newStatus === 'resolved' ? new Date() : null, id]);
+        
+        res.json({ 
+            success: true, 
+            newStatus: newStatus,
+            message: `Message updated successfully. Status changed to: ${newStatus}` 
+        });
+    } catch (err) {
+        console.error('Error updating contact message:', err);
+        res.status(500).json({ error: 'Error updating message' });
+    }
+});
+
+// Delete contact message
+app.delete('/admin/contact-messages/:id', requireAdminAuth, async (req, res) => {
+    const { id } = req.params;
+    
+    try {
+        await query('DELETE FROM contact_messages WHERE id = $1', [id]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Error deleting contact message:', err);
+        res.status(500).json({ error: 'Error deleting message' });
+    }
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

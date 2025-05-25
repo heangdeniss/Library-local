@@ -1,4 +1,27 @@
 
+// Password toggle functionality - Global function
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const passwordIcon = document.getElementById('password-icon');
+    
+    if (passwordInput && passwordIcon) {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            passwordIcon.classList.remove('fa-eye');
+            passwordIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            passwordIcon.classList.remove('fa-eye-slash');
+            passwordIcon.classList.add('fa-eye');
+        }
+    } else {
+        console.error('Password input or icon not found');
+    }
+}
+
+// Make function globally accessible
+window.togglePassword = togglePassword;
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('login-form');
     const emailInput = document.getElementById('email');
@@ -103,6 +126,5 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.textContent = 'Log In';
         
             alert(error.message || 'Login failed. Please check your credentials.');
-        });
-    });
+        });    });
 });

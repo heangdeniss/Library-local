@@ -74,8 +74,28 @@ INSERT INTO borrowing_settings (setting_name, setting_value, description) VALUES
 ('renewal_limit', '2', 'Maximum number of times a book can be renewed')
 ON CONFLICT (setting_name) DO NOTHING;
 
+-- Create contact messages table for client inquiries
+CREATE TABLE IF NOT EXISTS contact_messages (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    subject VARCHAR(500),
+    message TEXT NOT NULL,
+    status VARCHAR(20) DEFAULT 'unread' CHECK (status IN ('unread', 'read', 'replied', 'resolved')),
+    admin_notes TEXT,
+    user_id INTEGER REFERENCES users(id), -- Optional: link to user if they're logged in
+    ip_address INET,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    replied_at TIMESTAMP NULL,
+    replied_by INTEGER REFERENCES admin(id)
+);
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_borrowing_records_user_id ON borrowing_records(user_id);
 CREATE INDEX IF NOT EXISTS idx_borrowing_records_book_id ON borrowing_records(book_id);
 CREATE INDEX IF NOT EXISTS idx_borrowing_records_status ON borrowing_records(status);
 CREATE INDEX IF NOT EXISTS idx_borrowing_records_due_date ON borrowing_records(due_date);
+CREATE INDEX IF NOT EXISTS idx_contact_messages_status ON contact_messages(status);
+CREATE INDEX IF NOT EXISTS idx_contact_messages_created_at ON contact_messages(created_at);
+CREATE INDEX IF NOT EXISTS idx_contact_messages_email ON contact_messages(email);
