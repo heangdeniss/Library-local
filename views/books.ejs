@@ -1,74 +1,232 @@
 <!DOCTYPE html>
-<html lang="en" data-ds-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles/books.css">
-    <title>Books</title>
+    <title>Digital Library - Explore Categories</title>
 </head>
-<body>
-    <!-- Header Section -->
-    <div class="header">
-        <h1>Books Categories</h1>
-        <p>Explore Books in our library now!</p>
-    </div>
-
-    <!-- section Analysis and Statistic -->
-    <div class="Analysis">
-        <!-- Section Analysis and Statistic -->
-        <div class="book-item analysis" data-url="/login">
-            <div class="overlay">
-                <h2>Data Analysis & Statistics</h2>
-                <p>Focuses on statistical methods and data analysis techniques.</p>
+<body>    <!-- Modern Welcome Header -->
+    <header class="welcome-header">
+        <div class="welcome-content">
+            <div class="welcome-badge">
+                <i class="fas fa-lock me-2"></i>
+                Secure Access Required
+            </div>
+            <h1 class="welcome-title">
+                <span class="gradient-text">Digital Library</span>
+                <br>Academic Resources
+            </h1>
+            <p class="welcome-subtitle">
+                Discover our comprehensive collection of academic resources and technical documentation
+            </p>
+            <div class="welcome-cta">
+                <div class="cta-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div class="cta-text">
+                    <strong>Please login to access our digital library</strong>
+                    <small>Secure authentication required for full access</small>
+                </div>
             </div>
         </div>
+        <div class="welcome-pattern"></div>
+    </header>    <!-- Enhanced Preview Grid -->
+    <main class="preview-section">
+        <div class="container-xl">
+            <div class="section-header">
+                <h2 class="section-title">Library Categories Preview</h2>
+                <p class="section-description">Explore what awaits you in our digital library - login required for full access</p>
+            </div>
+            
+            <div class="preview-grid">
+                <!-- Data Analysis & Statistics -->
+                <article class="preview-card analysis" data-url="/login" data-category="analysis">
+                    <div class="card-background"></div>
+                    <div class="card-content">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="card-title">Data Analysis & Statistics</h3>
+                        <p class="card-description">Master statistical methods, probability theory, and data analysis techniques for informed decision-making.</p>
+                        <div class="card-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-book me-1"></i>
+                                45+ Resources
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-graduation-cap me-1"></i>
+                                Beginner to Advanced
+                            </span>
+                        </div>
+                        <div class="login-overlay">
+                            <i class="fas fa-lock"></i>
+                            <span>Login Required</span>
+                        </div>
+                    </div>
+                    <div class="card-hover-effect"></div>
+                </article>
 
-        <!-- Section Machine Learning and Artificial intelligence -->
-        <div class="book-item ml-ai" data-url="/login">
-            <div class="overlay">
-                <h2>Machine Learning & AI </h2>
-                <p>Covers machine learning algorithms and AI models.</p>
+                <!-- Machine Learning & AI -->
+                <article class="preview-card ml-ai" data-url="/login" data-category="ml-ai">
+                    <div class="card-background"></div>
+                    <div class="card-content">
+                        <div class="card-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3 class="card-title">Machine Learning & AI</h3>
+                        <p class="card-description">Explore cutting-edge algorithms, neural networks, and artificial intelligence applications.</p>
+                        <div class="card-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-book me-1"></i>
+                                60+ Resources
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-star me-1"></i>
+                                Most Popular
+                            </span>
+                        </div>
+                        <div class="login-overlay">
+                            <i class="fas fa-lock"></i>
+                            <span>Login Required</span>
+                        </div>
+                    </div>
+                    <div class="card-hover-effect"></div>
+                </article>
+
+                <!-- Big Data -->
+                <article class="preview-card big-data" data-url="/login" data-category="big-data">
+                    <div class="card-background"></div>
+                    <div class="card-content">
+                        <div class="card-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3 class="card-title">Big Data Analytics</h3>
+                        <p class="card-description">Learn to process, analyze, and extract insights from large-scale distributed datasets.</p>
+                        <div class="card-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-book me-1"></i>
+                                35+ Resources
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-trending-up me-1"></i>
+                                Trending
+                            </span>
+                        </div>
+                        <div class="login-overlay">
+                            <i class="fas fa-lock"></i>
+                            <span>Login Required</span>
+                        </div>
+                    </div>
+                    <div class="card-hover-effect"></div>
+                </article>
+
+                <!-- Data Visualization -->
+                <article class="preview-card visualization" data-url="/login" data-category="visualization">
+                    <div class="card-background"></div>
+                    <div class="card-content">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h3 class="card-title">Data Visualization</h3>
+                        <p class="card-description">Create compelling charts, graphs, and interactive dashboards to communicate data stories.</p>
+                        <div class="card-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-book me-1"></i>
+                                25+ Resources
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-palette me-1"></i>
+                                Creative Focus
+                            </span>
+                        </div>
+                        <div class="login-overlay">
+                            <i class="fas fa-lock"></i>
+                            <span>Login Required</span>
+                        </div>
+                    </div>
+                    <div class="card-hover-effect"></div>
+                </article>
+
+                <!-- Data Engineering & Databases -->
+                <article class="preview-card DED" data-url="/login" data-category="engineering">
+                    <div class="card-background"></div>
+                    <div class="card-content">
+                        <div class="card-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h3 class="card-title">Data Engineering & Databases</h3>
+                        <p class="card-description">Build robust data pipelines, manage databases, and design scalable data architectures.</p>
+                        <div class="card-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-book me-1"></i>
+                                40+ Resources
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-cogs me-1"></i>
+                                Technical Deep-dive
+                            </span>
+                        </div>
+                        <div class="login-overlay">
+                            <i class="fas fa-lock"></i>
+                            <span>Login Required</span>
+                        </div>
+                    </div>
+                    <div class="card-hover-effect"></div>
+                </article>
+
+                <!-- Deep Learning & Neural Networks -->
+                <article class="preview-card DLNN" data-url="/login" data-category="deep-learning">
+                    <div class="card-background"></div>
+                    <div class="card-content">
+                        <div class="card-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="card-title">Deep Learning & Neural Networks</h3>
+                        <p class="card-description">Dive deep into advanced neural architectures and state-of-the-art deep learning frameworks.</p>
+                        <div class="card-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-book me-1"></i>
+                                30+ Resources
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-bolt me-1"></i>
+                                Advanced Level
+                            </span>
+                        </div>
+                        <div class="login-overlay">
+                            <i class="fas fa-lock"></i>
+                            <span>Login Required</span>
+                        </div>
+                    </div>
+                    <div class="card-hover-effect"></div>
+                </article>
             </div>
         </div>
-
-        <!-- Big Data analysis Section -->
-        <div class="book-item big-data" data-url="/login">
-            <div class="overlay">
-                <h2>Big Data</h2>
-                <p>Deals with processing and analyzing large-scale data.</p>
+    </main>    <!-- Enhanced Navigation -->
+    <footer class="navigation-footer">
+        <div class="container-xl">
+            <div class="footer-content">
+                <div class="footer-cta">
+                    <h4>Ready to Explore?</h4>
+                    <p>Join our digital library community and unlock access to premium resources</p>
+                    <a href="/login" class="cta-button">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        <span>Login to Library</span>
+                        <div class="btn-shine"></div>
+                    </a>
+                </div>
+                <button class="modern-return-btn" id="returnButton">
+                    <i class="fas fa-home me-2"></i>
+                    <span>Return to Home</span>
+                    <div class="btn-shine"></div>
+                </button>
             </div>
         </div>
-
-        <!-- Data visualization Section -->
-        <div class="book-item visualization" data-url="/login">
-            <div class="overlay">
-                <h2>Data Visualization</h2>
-                <p>Teaches how to present data visually with charts and graphs.</p>
-            </div>
-        </div>
-
-        <!-- Data Engineering and Database Section -->
-        <div class="book-item DED" data-url="/login">
-            <div class="overlay">
-                <h2>Data Engineering & Databases</h2>
-                <p>Focuses on database management and data pipelines.</p>
-            </div>
-        </div>
-
-        <!-- Deep Learning and Neural Networks Section -->
-        <div class="book-item DLNN" data-url="/login">
-            <div class="overlay">
-                <h2>Deep Learning & Neural Networks</h2>
-                <p>Covers neural networks and deep learning techniques.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Return Button Section -->
-    <div class="return-btn-container">
-        <button class="return-btn" id="returnButton">Back Home</button>
-    </div>
+    </footer>
 
 <script src="js/books.js"></script>
 

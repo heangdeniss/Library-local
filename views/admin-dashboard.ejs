@@ -276,6 +276,130 @@ a {
         align-self: stretch;
         justify-content: center;
     }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+    }
+}
+
+/* Statistics Section Styles */
+.stats-section {
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    margin-bottom: 20px;
+}
+
+.stats-section h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h4 {
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.stat-card p {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* Recent Activity Section Styles */
+.recent-activity-section {
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    margin-bottom: 20px;
+}
+
+.recent-activity-section h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+}
+
+.activity-list {
+    display: grid;
+    gap: 15px;
+}
+
+.activity-item {
+    background-color: white;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    border-left: 4px solid #3498db;
+}
+
+.activity-info h5 {
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.activity-info p {
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.status {
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status.borrowed {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+.status.returned {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.status.overdue {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.view-all-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.view-all-btn:hover {
+    background-color: #2980b9;
+    color: white;
 }
 
     </style>
@@ -295,10 +419,66 @@ a {
                 <ul class="action-list">
                     <li><a href="#upload-section">Upload PDF Documents</a></li>
                     <li><a href="#manage-books">Manage Books</a></li>
-                    <li><a href="#">Manage Users</a></li>
-                    <li><a href="#">View Statistics</a></li>
+                    <li><a href="/admin/borrowing/records">Borrowing Records</a></li>
+                    <li><a href="/admin/borrowing/settings">Borrowing Settings</a></li>
+                    <li><a href="#stats-section">View Statistics</a></li>
                 </ul>
             </div>
+
+            <!-- Statistics Section -->
+            <% if (typeof stats !== 'undefined' && stats) { %>
+            <div id="stats-section" class="stats-section">
+                <h3>Library Statistics</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4><%= stats.totalBooks || 0 %></h4>
+                        <p>Total Books</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4><%= stats.totalUsers || 0 %></h4>
+                        <p>Total Users</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4><%= stats.totalBorrowings || 0 %></h4>
+                        <p>Total Borrowings</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4><%= stats.activeBorrowings || 0 %></h4>
+                        <p>Active Borrowings</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4><%= stats.overdueBorrowings || 0 %></h4>
+                        <p>Overdue Books</p>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+
+            <!-- Recent Borrowing Activity -->
+            <% if (typeof recentBorrowings !== 'undefined' && recentBorrowings && recentBorrowings.length > 0) { %>
+            <div class="recent-activity-section">
+                <h3>Recent Borrowing Activity</h3>
+                <div class="activity-list">
+                    <% recentBorrowings.slice(0, 5).forEach(function(record) { %>
+                    <div class="activity-item">
+                        <div class="activity-info">
+                            <h5><%= record.title %></h5>
+                            <p><strong>User:</strong> <%= record.username %> (<%= record.email %>)</p>
+                            <p><strong>Author:</strong> <%= record.author %></p>
+                            <p><strong>Borrowed:</strong> <%= new Date(record.borrow_date).toLocaleDateString() %></p>
+                            <p><strong>Due:</strong> <%= new Date(record.due_date).toLocaleDateString() %></p>
+                            <p><strong>Status:</strong> 
+                                <span class="status <%= record.status %>"><%= record.status %></span>
+                            </p>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="/admin/borrowing/records" class="view-all-btn">View All Borrowing Records</a>
+                </div>
+            </div>
+            <% } %>
 
             <!-- PDF Upload Section -->
             <div id="upload-section" class="upload-section">

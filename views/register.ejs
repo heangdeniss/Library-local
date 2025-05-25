@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="styles/register.css">
     <title>Register</title>
 </head>
@@ -12,33 +13,35 @@
     <div class="register-container">
         <h2>Create an Account</h2>
         <form id="register-form" action="/register" method="post">
-    <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" placeholder="Enter your username" required>
-    </div>
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required>
-    </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter your password" required>
-    </div>
-    <div class="form-group">
-        <label for="confirm-password">Confirm Password</label>
-        <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
-    </div>
-    <button type="submit" class="btn-submit">Register Now</button>
-</form>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <div class="password-strength" id="password-strength"></div>
+                <small style="color: #6c757d; font-size: 0.75rem; margin-top: 4px; display: block;">
+                    💡 You can use any password you want. We'll show you tips to make it stronger, but it's your choice!
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+                <div class="error-message" id="password-match-error">Passwords do not match</div>
+            </div>
+            <button type="submit" class="btn-submit">Register Now</button>
+        </form>
 
         <div class="switch-links">
             <a href="/login">Already have an account? Log in</a>
         </div>
     </div>
 
-    <script src="js/register.js">
-        
-    </script>
+    <script src="js/register.js"></script>
 
 </body>
 </html>

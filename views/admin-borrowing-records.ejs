@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrowing Records Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card h3 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .records-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #dee2e6;
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table th {
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-borrowed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-returned {
+            background: #cce7ff;
+            color: #004085;
+        }
+        
+        .status-overdue {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .overdue-row {
+            background-color: #fdf2f2;
+        }
+        
+        .due-soon-row {
+            background-color: #fef9e7;
+        }
+        
+        .filter-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+        
+        .settings-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .settings-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .btn-update-settings {
+            background: #28a745;
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        
+        .btn-update-settings:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/admin/dashboard">Admin Dashboard</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+                <a class="nav-link" href="/admin/borrowing/records">Borrowing Records</a>
+                <a class="nav-link" href="/admin/logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="admin-container">
+        <h1 class="h2 mb-4">Borrowing Records Management</h1>
+        
+        <!-- Statistics Cards -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <h3><%= records.filter(r => r.status === 'borrowed').length %></h3>
+                <p>Currently Borrowed</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= records.filter(r => r.status === 'returned').length %></h3>
+                <p>Total Returned</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= records.filter(r => r.status === 'borrowed' && new Date(r.due_date) < new Date()).length %></h3>
+                <p>Overdue Books</p>
+            </div>
+            <div class="stat-card">
+                <h3>$<%= records.filter(r => r.fine_amount > 0).reduce((sum, r) => sum + parseFloat(r.fine_amount), 0).toFixed(2) %></h3>
+                <p>Total Fines</p>
+            </div>
+        </div>
+        
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h5 class="mb-3">Filter Records</h5>
+            <div class="filter-group">
+                <div class="form-group">
+                    <label for="filterUser">Filter by User</label>
+                    <input type="text" class="form-control" id="filterUser" placeholder="User name or email">
+                </div>
+                <div class="form-group">
+                    <label for="filterBook">Filter by Book</label>
+                    <input type="text" class="form-control" id="filterBook" placeholder="Book title or author">
+                </div>
+                <div class="form-group">
+                    <label for="filterStatus">Filter by Status</label>
+                    <select class="form-control" id="filterStatus">
+                        <option value="">All Status</option>
+                        <option value="borrowed">Borrowed</option>
+                        <option value="returned">Returned</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary w-100" onclick="applyFilters()">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Records Table -->
+        <div class="records-section">
+            <h4 class="mb-4">All Borrowing Records (<%= records.length %> total)</h4>
+            
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Book</th>
+                            <th>Author</th>
+                            <th>Borrow Date</th>
+                            <th>Due Date</th>
+                            <th>Return Date</th>
+                            <th>Status</th>
+                            <th>Fine</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsTableBody">
+                        <% records.forEach(record => { %>
+                            <% 
+                                const dueDate = new Date(record.due_date);
+                                const today = new Date();
+                                const isOverdue = record.status === 'borrowed' && dueDate < today;
+                                const isDueSoon = record.status === 'borrowed' && dueDate >= today && (dueDate - today) / (1000 * 60 * 60 * 24) <= 3;
+                                let rowClass = '';
+                                if (isOverdue) rowClass = 'overdue-row';
+                                else if (isDueSoon) rowClass = 'due-soon-row';
+                            %>
+                            <tr class="<%= rowClass %>" 
+                                data-user="<%= record.username.toLowerCase() %> <%= record.email.toLowerCase() %>"
+                                data-book="<%= record.title.toLowerCase() %> <%= record.author.toLowerCase() %>"
+                                data-status="<%= record.status %>">
+                                <td><%= record.id %></td>
+                                <td>
+                                    <strong><%= record.username %></strong><br>
+                                    <small class="text-muted"><%= record.email %></small>
+                                </td>
+                                <td><%= record.title %></td>
+                                <td><%= record.author %></td>
+                                <td><%= new Date(record.borrow_date).toLocaleDateString() %></td>
+                                <td>
+                                    <%= dueDate.toLocaleDateString() %>
+                                    <% if (isOverdue) { %>
+                                        <br><small class="text-danger">Overdue!</small>
+                                    <% } else if (isDueSoon) { %>
+                                        <br><small class="text-warning">Due Soon</small>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <%= record.return_date ? new Date(record.return_date).toLocaleDateString() : '-' %>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-<%= record.status %>">
+                                        <%= record.status.charAt(0).toUpperCase() + record.status.slice(1) %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <% if (record.fine_amount > 0) { %>
+                                        <span class="text-danger">$<%= parseFloat(record.fine_amount).toFixed(2) %></span>
+                                    <% } else { %>
+                                        -
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Borrowing Settings -->
+        <div class="settings-section">
+            <h4 class="mb-4">Borrowing Settings</h4>
+            <form id="settingsForm">
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label for="defaultBorrowDays">Default Borrow Days</label>
+                        <input type="number" class="form-control" id="defaultBorrowDays" name="default_borrow_days" value="14" min="1" max="90">
+                        <small class="text-muted">Number of days a book can be borrowed</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="maxBooksPerUser">Max Books Per User</label>
+                        <input type="number" class="form-control" id="maxBooksPerUser" name="max_books_per_user" value="5" min="1" max="20">
+                        <small class="text-muted">Maximum books a user can borrow at once</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="finePerDay">Fine Per Day ($)</label>
+                        <input type="number" class="form-control" id="finePerDay" name="fine_per_day" value="0.50" min="0" max="10" step="0.01">
+                        <small class="text-muted">Fine amount per day for overdue books</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="renewalLimit">Renewal Limit</label>
+                        <input type="number" class="form-control" id="renewalLimit" name="renewal_limit" value="2" min="0" max="10">
+                        <small class="text-muted">Maximum number of renewals allowed</small>
+                    </div>
+                </div>
+                <button type="submit" class="btn-update-settings">Update Settings</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function applyFilters() {
+            const userFilter = document.getElementById('filterUser').value.toLowerCase();
+            const bookFilter = document.getElementById('filterBook').value.toLowerCase();
+            const statusFilter = document.getElementById('filterStatus').value;
+            
+            const tableRows = document.querySelectorAll('#recordsTableBody tr');
+            let visibleCount = 0;
+            
+            tableRows.forEach(row => {
+                const userData = row.dataset.user;
+                const bookData = row.dataset.book;
+                const statusData = row.dataset.status;
+                
+                let shouldShow = true;
+                
+                if (userFilter && !userData.includes(userFilter)) {
+                    shouldShow = false;
+                }
+                
+                if (bookFilter && !bookData.includes(bookFilter)) {
+                    shouldShow = false;
+                }
+                
+                if (statusFilter && statusData !== statusFilter) {
+                    shouldShow = false;
+                }
+                
+                if (shouldShow) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update header count
+            document.querySelector('.records-section h4').textContent = 
+                `All Borrowing Records (${visibleCount} shown of <%= records.length %> total)`;
+        }
+        
+        // Real-time filtering
+        document.getElementById('filterUser').addEventListener('input', applyFilters);
+        document.getElementById('filterBook').addEventListener('input', applyFilters);
+        document.getElementById('filterStatus').addEventListener('change', applyFilters);
+        
+        // Settings form submission
+        document.getElementById('settingsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const settings = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/admin/borrowing/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settings)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Settings updated successfully!');
+                } else {
+                    alert('Error updating settings: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error updating settings:', error);
+                alert('Error updating settings');
+            }
+        });
+    </script>
+</body>
+</html>

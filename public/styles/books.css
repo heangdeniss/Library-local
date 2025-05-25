@@ -1,54 +1,178 @@
+/* Professional Books Page Styling */
 body {
-    background-color: black;
     margin: 0;
-    font-family: 'Poppins', sans-serif;
-    color: rgb(110, 88, 88);
+    font-family: 'Inter', 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    position: relative;
+    overflow-x: hidden;
+    line-height: 1.6;
 }
 
+/* Smooth page transitions */
+* {
+    box-sizing: border-box;
+}
+
+/* Professional Header */
 .header {
     text-align: center;
-    padding: 3rem 1rem;
-    background-color: black;
-    color: whitesmoke;
-    transition: background-image 1s ease-in-out;
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    height: 500px;
+    padding: 6rem 2rem 5rem;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.97) 0%, rgba(51, 65, 85, 0.95) 50%, rgba(15, 23, 42, 0.97) 100%);
+    color: white;
+    position: relative;
+    overflow: hidden;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+    background-size: 400px 400px, 300px 300px, 500px 500px;
+    animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-20px) rotate(1deg); }
+    66% { transform: translateY(10px) rotate(-1deg); }
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('../images/pic1.png') center/cover;
+    opacity: 0.1;
+    z-index: -1;
+}
+
+.header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(73, 80, 87, 0.1) 0%, rgba(52, 58, 64, 0.1) 100%);
+    z-index: 1;
+}
+
+.header h1,
+.header p,
+.header small {
+    position: relative;
+    z-index: 2;
 }
 
 .header h1 {
-    font-size: 5rem;
+    font-size: 4rem;
     margin: 0;
-    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 1.5rem;
 }
 
 .header p {
-    font-size: 2.5rem;
-    margin-top: 1rem;
+    font-size: 1.3rem;
+    margin: 0;
+    opacity: 0.9;
+    font-weight: 300;
 }
 
-/* analysis and statistic*/
+.header small {
+    background: rgba(255, 193, 7, 0.2);
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    border: 1px solid rgba(255, 193, 7, 0.4);
+    margin-top: 2rem;
+    display: inline-block;
+    backdrop-filter: blur(10px);
+}
+
+/* Professional Grid Layout */
 .Analysis {
+    max-width: 1200px;
+    margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    padding: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    padding: 3rem 2rem;
 }
 
+/* Professional Book Cards */
 .book-item {
     position: relative;
-    height: 300px;
-    border-radius: 10px;
+    height: 320px;
+    border-radius: 20px;
     overflow: hidden;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: white;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.book-item.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.book-item.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 3;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .book-item:hover {
-    transform: scale(1.03);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+}
+
+.book-item .card-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.1;
+    transition: all 0.4s ease;
+}
+
+.book-item:hover .card-background {
+    opacity: 0.2;
+    transform: scale(1.1);
 }
 
 .book-item .overlay {
@@ -57,14 +181,18 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg, rgba(73, 80, 87, 0.85) 0%, rgba(52, 58, 64, 0.9) 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
+    padding: 2rem;
+    color: white;
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: all 0.4s ease;
+    z-index: 2;
+    backdrop-filter: blur(5px);
 }
 
 .book-item:hover .overlay {
@@ -72,69 +200,716 @@ body {
 }
 
 .book-item h2 {
-    font-size: 2rem;
-    margin: 0;
+    font-size: 1.6rem;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+    line-height: 1.3;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .book-item p {
-    margin-top: 0.5rem;
+    margin: 0;
     font-size: 1rem;
+    line-height: 1.5;
+    opacity: 0.95;
+    font-weight: 300;
 }
 
-/* Background Images */
-.analysis {
-    background-image: url(../images/fundamentals-of-statistics-cover.png);
+/* Enhanced Section Headers */
+.categories-section, .preview-section {
+    padding: 5rem 0;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 1rem 0;
+}
+
+.section-description {
+    font-size: 1.2rem;
+    color: #64748b;
+    margin: 0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Modern Card Grid */
+.categories-grid, .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Enhanced Category Cards */
+.category-card, .preview-card {
+    position: relative;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    height: 320px;
+}
+
+.category-card:hover, .preview-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+}
+
+.card-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.1;
+    transition: all 0.4s ease;
 }
 
-.ml-ai {
-    background-image: url(../images/324bs_ArtificialIntelligenceMachineLearning-cover.webp);
-    background-size: cover;
-    background-position: center;
+.category-card:hover .card-background,
+.preview-card:hover .card-background {
+    opacity: 0.2;
+    transform: scale(1.1);
 }
 
-.big-data {
-    background-image: url(../images/Big-data-jawfakhwbfawhfvaawdawfawfaw442834-cover.png);
-    background-size: cover;
-    background-position: center;
+.card-content {
+    position: relative;
+    z-index: 2;
+    padding: 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-.visualization {
-    background-image: url(../images/845-visualization-cover.webp);
-    background-size: cover;
-    background-position: center;
+.card-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    color: white;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
 }
 
-.DED {
-    background-image: url(../images/Five.Co-The-MySQL-cover.png);
-    background-size: cover;
-    background-position: center;
+.category-card:hover .card-icon,
+.preview-card:hover .card-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
-.DLNN {
-    background-image: url(../images/Deep-Learning-and-Neural-Networks-a-detailed-analysis-Banner-cover.png);
-    background-size: cover;
-    background-position: center;
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 1rem 0;
+    line-height: 1.3;
 }
 
-/* Return Button */
+.card-description {
+    color: #64748b;
+    margin: 0 0 1.5rem 0;
+    flex-grow: 1;
+    line-height: 1.6;
+}
+
+.card-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.card-arrow {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateX(10px);
+}
+
+.category-card:hover .card-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.card-hover-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.category-card:hover .card-hover-effect,
+.preview-card:hover .card-hover-effect {
+    opacity: 1;
+}
+
+/* Login Overlay for Preview Cards */
+.login-overlay {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+/* Professional Return Button */
 .return-btn-container {
     text-align: center;
-    margin: 2rem 0;
+    margin: 3rem 0;
+    padding-bottom: 2rem;
 }
 
 .return-btn {
-    background: whitesmoke;
-    color: black;
+    background: linear-gradient(135deg, #64748b, #475569);
+    color: white;
     border: none;
-    padding: 0.8rem 1.2rem;
-    font-size: 1rem;
-    border-radius: 5px;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 500;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
 }
 
 .return-btn:hover {
-    background: whitesmoke;
+    background: linear-gradient(135deg, #475569, #334155);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(100, 116, 139, 0.3);
+}
+
+.return-btn:active {
+    transform: translateY(0);
+}
+
+.return-btn i {
+    transition: transform 0.3s ease;
+}
+
+.return-btn:hover i {
+    transform: translateX(-2px);
+}
+
+/* Professional tooltip styles */
+.book-item[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -45px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(52, 58, 64, 0.95);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+}
+
+.book-item:hover[data-tooltip]::before {
+    opacity: 1;
+}
+
+/* Professional breadcrumb styling */
+.breadcrumb-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem 0;
+}
+
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.breadcrumb-item a {
+    color: #495057;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb-item a:hover {
+    color: #343a40;
+}
+
+.breadcrumb-item.active {
+    color: #6c757d;
+}
+
+/* Enhanced Footer */
+.navigation-footer {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 4rem 0 3rem;
+    border-top: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.footer-info h4,
+.footer-cta h4 {
+    color: #1e293b;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.footer-info p,
+.footer-cta p {
+    color: #64748b;
+    margin: 0;
+}
+
+.footer-cta {
+    text-align: center;
+}
+
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+    text-decoration: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 500;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+    color: white;
+}
+
+.btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.cta-button:hover .btn-shine {
+    left: 100%;
+}
+
+/* Book Cards Styling for Category Pages */
+.book-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: 100%;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.book-card .card-body {
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.book-card .book-icon {
+    text-align: center;
+    color: #3b82f6;
+}
+
+.book-card .card-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #1e293b;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.book-card .card-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #64748b;
+}
+
+.book-card .book-meta {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 0.75rem;
+    margin-top: auto;
+}
+
+.book-card .btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background: #3b82f6;
+    border: none;
+}
+
+.book-card .btn:hover {
+    transform: translateY(-1px);
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Empty state improvements */
+.text-center.py-5 {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin: 2rem 0;
+    padding: 4rem 2rem !important;
+}
+
+.text-center.py-5 i {
+    color: #94a3b8;
+}
+
+.text-center.py-5 h3 {
+    color: #1e293b;
+    margin-bottom: 1rem;
+}
+
+.text-center.py-5 p {
+    color: #64748b;
+    font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header {
+        padding: 4rem 1rem 3rem;
+        min-height: 50vh;
+    }
+    
+    .header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .header p {
+        font-size: 1.2rem;
+    }
+    
+    .Analysis {
+        grid-template-columns: 1fr;
+        padding: 2rem 1rem;
+        gap: 1.5rem;
+    }
+    
+    .book-item {
+        height: 280px;
+    }
+    
+    .book-item h2 {
+        font-size: 1.4rem;
+    }
+    
+    .book-item .overlay {
+        padding: 1.5rem;
+    }
+    
+    .hero-header, .welcome-header {
+        padding: 4rem 1rem 3rem;
+        min-height: 50vh;
+    }
+    
+    .hero-title, .welcome-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle, .welcome-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .hero-stats {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .stat-divider {
+        width: 3rem;
+        height: 1px;
+    }
+    
+    .categories-grid, .preview-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0;
+    }
+    
+    .category-card, .preview-card {
+        height: 280px;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .welcome-cta {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .header {
+        padding: 2rem 1rem;
+    }
+    
+    .header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .header p {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .header small {
+        font-size: 0.8rem;
+        padding: 0.6rem 1.2rem;
+    }
+    
+    .Analysis {
+        padding: 1.5rem 1rem;
+    }
+    
+    .book-item {
+        height: 180px;
+    }
+    
+    .book-item h2 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .book-item p {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+    
+    .return-btn {
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .section-description {
+        font-size: 1rem;
+    }
+    
+    .card-content {
+        padding: 1.5rem;
+    }
+    
+    .card-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+    
+    .card-title {
+        font-size: 1.25rem;
+    }
+}
+
+/* Print styles for professional documentation */
+@media print {
+    .header {
+        background: none !important;
+        color: #000 !important;
+        padding: 1rem;
+    }
+    
+    .book-item {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .book-item::before {
+        display: none;
+    }
+    
+    .book-item .overlay {
+        opacity: 1;
+        background: transparent;
+        color: #000;
+    }
+    
+    .return-btn-container {
+        display: none;
+    }
+}
+
+/* Category pages without headers styling */
+.books-section {
+    background: #f8fafc;
+    min-height: 100vh;
+    padding-top: 2rem !important;
+}
+
+.books-section .container {
+    max-width: 1200px;
+    padding-top: 0;
+}
+
+/* Improved book card layout for header-less pages */
+.book-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: 100%;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.book-card .card-body {
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.book-card .book-icon {
+    text-align: center;
+    color: #3b82f6;
+}
+
+.book-card .card-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #1e293b;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.book-card .card-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #64748b;
+}
+
+.book-card .book-meta {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 0.75rem;
+    margin-top: auto;
+}
+
+.book-card .btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background: #3b82f6;
+    border: none;
+}
+
+.book-card .btn:hover {
+    transform: translateY(-1px);
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Empty state improvements */
+.text-center.py-5 {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin: 2rem 0;
+    padding: 4rem 2rem !important;
+}
+
+.text-center.py-5 i {
+    color: #94a3b8;
+}
+
+.text-center.py-5 h3 {
+    color: #1e293b;
+    margin-bottom: 1rem;
+}
+
+.text-center.py-5 p {
+    color: #64748b;
+    font-size: 1.1rem;
 }

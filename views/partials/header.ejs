@@ -1,30 +1,72 @@
- <!--Header--> 
- <section id="home" class="gradient-background display-fixed" style="position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;">
+<!--Header--> 
+ <section id="home" class="gradient-background" style="position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;">
     <div class="container">
-        <header class="p-3 mb-3 border-bottom">
+        <header class="p-1 mb-0">
             <div class="container">
-                <div class="d-flex flex-wrap align-items-center justify-content-left justify-content-lg">
-                    <div>
-                      <a class="navbar-brand gap-10" href="https://www.google.com/maps/place/Institute+of+Technology+of+Cambodia/@11.5703953,104.8980518,20z/data=!4m6!3m5!1s0x3109517388680e15:0x63057e6682968f5!8m2!3d11.5703975!4d104.8980857!16zL20vMDZ5dmhz?entry=ttu&g_ep=EgoyMDI1MDMxOC4wIKXMDSoJLDEwMjExNDU1SAFQAw%3D%3D">
-                          <img src="images/book-half.svg" alt="Library" height="25"> Library
+                <div class="d-flex flex-wrap align-items-center justify-content-between">
+                    <div>                      <a class="navbar-brand d-flex align-items-center" href="https://www.google.com/maps/place/Institute+of+Technology+of+Cambodia/@11.5703953,104.8980518,20z/data=!4m6!3m5!1s0x3109517388680e15:0x63057e6682968f5!8m2!3d11.5703975!4d104.8980857!16zL20vMDZ5dmhz?entry=ttu&g_ep=EgoyMDI1MDMxOC4wIKXMDSoJLDEwMjExNDU1SAFQAw%3D%3D">
+                          <img src="images/book-half.svg" alt="Library" height="20"> 
+                          <span class="ms-2">AMS Library</span>
                       </a>
-                    </div>
-                    <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0 align-items-center" class="top-bar">
-                        <li><a href="/" class="nav-link px-2 link-body-emphasis">Home</a></li>
-                        <li><a href="/" class="nav-link px-2 link-body-emphasis">Overview</a></li>
-                        <li><a href="/books" class="nav-link px-2 link-body-emphasis">Books</a></li>
-                        
-                    </ul>
-                    <div>
-                      <ul class="nav col-lg-auto me-lg-auto mb-2 mb-md-0 justify-content-right" class="top-bar">
-                          <li>
-                              <a href="/login" class="nav-link px-2 link-body-emphasis">log In</a></li>
-                            <li>
-                              <a href="/register" class="nav-link px-2 link-body-emphasis ">Sign Up</a></li>
-                        </ul>
+                    </div>                    <ul class="nav d-none d-lg-flex me-auto mb-0 align-items-center">
+                        <li><a href="/" class="nav-link">Home</a></li>
+                        <li><a href="/" class="nav-link">Overview</a></li>
+                        <li><a href="/books" class="nav-link">Books</a></li>
+                        <li><a href="/borrowing/books" class="nav-link">Borrow Books</a></li>
+                        <li><a href="/borrowing/dashboard" class="nav-link">My Borrowings</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Legal
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/about">About Us</a></li>
+                                <li><a class="dropdown-item" href="/privacy-policy">Privacy Policy</a></li>
+                                <li><a class="dropdown-item" href="/terms-of-service">Terms of Service</a></li>
+                            </ul>
+                        </li>
+                    </ul>                    <div class="d-flex align-items-center gap-2">
+                        <button class="mobile-menu-toggle d-lg-none" type="button">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <div class="d-none d-lg-flex header-buttons">
+                            <a href="/login" class="btn btn-auth btn-sm">Log In</a>
+                            <a href="/register" class="btn btn-outline-secondary btn-sm">Sign Up</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </header>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <div class="mobile-nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/" class="nav-link">Overview</a>
+                <a href="/books" class="nav-link">Books</a>
+                <a href="/borrowing/books" class="nav-link">Borrow Books</a>
+                <a href="/borrowing/dashboard" class="nav-link">My Borrowings</a>
+                <a href="/about" class="nav-link">About Us</a>
+                <a href="/privacy-policy" class="nav-link">Privacy Policy</a>
+                <a href="/terms-of-service" class="nav-link">Terms of Service</a>
+            </div>
+            <div class="mobile-auth-buttons">
+                <a href="/login" class="btn btn-auth btn-sm">Log In</a>
+                <a href="/register" class="btn btn-outline-secondary btn-sm">Sign Up</a>
+            </div>
+        </div>
     </div>
   </section>
+
+<script>
+    // Mobile menu toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileToggle = document.querySelector('.mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if (mobileToggle && mobileMenu) {
+            mobileToggle.addEventListener('click', function() {
+                mobileMenu.classList.toggle('show');
+            });
+        }
+    });
+</script>

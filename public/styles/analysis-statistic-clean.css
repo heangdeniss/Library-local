@@ -1,0 +1,265 @@
+/* Professional Analysis & Statistics Page Styling */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 100vh;
+    color: #2c3e50;
+    padding-top: 80px; /* Account for fixed header */
+}
+
+/* Simple Page Title Section */
+.page-title {
+    background: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.page-title h1 {
+    font-size: 2rem;
+    margin: 0;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.page-title .lead {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin: 0.5rem 0 0 0;
+}
+
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb-item a:hover {
+    color: #495057;
+}
+
+.breadcrumb-item.active {
+    color: #2c3e50;
+}
+
+/* PDF Section */
+.pdf-section {
+    padding: 3rem 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* PDF Container */
+.pdf-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* PDF Controls */
+.pdf-controls {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.pdf-controls .btn {
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.pdf-controls .btn-primary {
+    background: linear-gradient(135deg, #495057, #343a40);
+    color: white;
+    box-shadow: 0 4px 15px rgba(73, 80, 87, 0.3);
+}
+
+.pdf-controls .btn-primary:hover {
+    background: linear-gradient(135deg, #343a40, #212529);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(73, 80, 87, 0.4);
+}
+
+.pdf-controls .btn-outline-primary {
+    background: transparent;
+    color: #495057;
+    border: 2px solid #495057;
+}
+
+.pdf-controls .btn-outline-primary:hover {
+    background: #495057;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.pdf-controls .btn-secondary {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    color: white;
+}
+
+.pdf-controls .btn-secondary:hover {
+    background: linear-gradient(135deg, #5a6268, #495057);
+    transform: translateY(-2px);
+}
+
+/* PDF Viewer */
+.pdf-viewer {
+    padding: 1rem;
+    background: #f8f9fa;
+}
+
+.pdf-object {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* PDF Fallback */
+.pdf-fallback {
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 10px;
+}
+
+.fallback-content {
+    text-align: center;
+    color: #6c757d;
+}
+
+.fallback-content i {
+    color: #dc3545;
+    margin-bottom: 1rem;
+}
+
+.fallback-content h4 {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* No PDF Container */
+.no-pdf-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.no-pdf-content {
+    text-align: center;
+    color: #6c757d;
+    padding: 3rem;
+}
+
+.no-pdf-content i {
+    color: #ffc107;
+    margin-bottom: 1rem;
+}
+
+.no-pdf-content h3 {
+    color: #495057;
+    margin-bottom: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding-top: 70px;
+    }
+    
+    .page-title {
+        padding: 1.5rem 0;
+    }
+    
+    .page-title h1 {
+        font-size: 1.8rem;
+    }
+    
+    .pdf-controls {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .pdf-controls .btn {
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+    
+    .pdf-viewer {
+        padding: 0.5rem;
+    }
+    
+    .pdf-object {
+        height: 500px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-top: 65px;
+    }
+    
+    .container {
+        padding: 0 0.5rem;
+    }
+    
+    .page-title h1 {
+        font-size: 1.5rem;
+    }
+    
+    .page-title .lead {
+        font-size: 1rem;
+    }
+    
+    .pdf-object {
+        height: 400px;
+    }
+}
+
+/* Fullscreen styles */
+.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background: white;
+}
+
+.fullscreen .pdf-object {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+}

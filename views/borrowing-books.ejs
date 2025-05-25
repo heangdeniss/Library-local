@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Browse Books to Borrow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/borrowing.css"><style>        body {
+            padding-top: 20px; /
+        }
+        
+        .books-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e9ecef;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .book-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .book-author {
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+        
+        .book-category {
+            background: #e8f4f8;
+            color: #2980b9;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .availability-info {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .availability-info.unavailable {
+            border-left-color: #dc3545;
+            background: #fdf2f2;
+        }
+        
+        .availability-text {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .book-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn-borrow {
+            background: #28a745;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+            flex: 1;
+        }
+        
+        .btn-borrow:hover:not(:disabled) {
+            background: #218838;
+        }
+        
+        .btn-borrow:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .btn-read {
+            background: #007bff;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+            flex: 1;
+        }
+        
+        .btn-read:hover {
+            background: #0056b3;
+        }
+        
+        .search-filter-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+        
+        .form-control {
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+        }
+        
+        .stats-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .no-books {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .no-books h3 {
+            color: #495057;
+            margin-bottom: 10px;
+        }    </style>
+</head>
+<body class="bg-light">
+      <div class="books-container">
+        <!-- Navigation -->
+        <nav class="mb-4">
+            <a href="/index1" class="btn btn-outline-secondary me-2">← Back to Library</a>
+            <a href="/borrowing/dashboard" class="btn btn-secondary">My Borrowing Dashboard</a>
+        </nav>
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h2">Browse Books to Borrow</h1>
+        </div>
+        
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <strong><%= books.length %> books available</strong> | 
+            <strong><%= books.filter(book => book.is_available).length %> currently available for borrowing</strong>
+        </div>
+        
+        <!-- Search and Filter Section -->
+        <div class="search-filter-section">
+            <h5 class="mb-3">Search & Filter Books</h5>
+            <div class="filter-group">
+                <div class="form-group">
+                    <label for="searchTitle">Search by Title or Author</label>
+                    <input type="text" class="form-control" id="searchTitle" placeholder="Enter book title or author name">
+                </div>
+                <div class="form-group">
+                    <label for="filterCategory">Filter by Category</label>
+                    <select class="form-control" id="filterCategory">
+                        <option value="">All Categories</option>
+                        <option value="analysis-statistic">Analysis & Statistics</option>
+                        <option value="big-data">Big Data</option>
+                        <option value="ml-ai">Machine Learning & AI</option>
+                        <option value="data-vis">Data Visualization</option>
+                        <option value="dl-nn">Deep Learning & Neural Networks</option>
+                        <option value="data-engineer-database">Data Engineering & Database</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filterAvailability">Availability</label>
+                    <select class="form-control" id="filterAvailability">
+                        <option value="">All Books</option>
+                        <option value="available">Available Only</option>
+                        <option value="unavailable">Unavailable Only</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Books Grid -->
+        <% if (books.length === 0) { %>
+            <div class="no-books">
+                <h3>No books available</h3>
+                <p>Check back later for new additions to our library.</p>
+            </div>
+        <% } else { %>
+            <div class="book-grid" id="booksGrid">
+                <% books.forEach(book => { %>
+                    <div class="book-card" 
+                         data-title="<%= book.title.toLowerCase() %>" 
+                         data-author="<%= book.author.toLowerCase() %>" 
+                         data-category="<%= book.category %>"
+                         data-available="<%= book.is_available %>">
+                        <h4 class="book-title"><%= book.title %></h4>
+                        <p class="book-author"><strong>By:</strong> <%= book.author %></p>
+                        <span class="book-category"><%= book.category %></span>
+                        
+                        <div class="availability-info <%= !book.is_available ? 'unavailable' : '' %>">
+                            <% if (book.is_available) { %>
+                                <p class="availability-text text-success">
+                                    <strong>✓ Available</strong> 
+                                    (<%= book.available_copies %> of <%= book.total_copies %> copies available)
+                                </p>
+                            <% } else { %>
+                                <p class="availability-text text-danger">
+                                    <strong>✗ Currently Unavailable</strong> 
+                                    (All <%= book.total_copies %> copies are borrowed)
+                                </p>
+                            <% } %>
+                        </div>
+                        
+                        <% if (book.description) { %>
+                            <p class="text-muted small mb-3"><%= book.description.substring(0, 100) %>...</p>
+                        <% } %>                          <div class="book-actions">
+                            <a href="/view-pdf/<%= book.id %>" class="btn-read">Read Preview</a>
+                            <% if (book.is_available) { %>
+                                <button class="btn-borrow" data-book-id="<%= book.id %>" onclick="borrowBook(this.dataset.bookId)">
+                                    Borrow Book
+                                </button>
+                            <% } else { %>
+                                <button class="btn-borrow" disabled>
+                                    Unavailable
+                                </button>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>        async function borrowBook(bookId) {
+            if (!confirm('Are you sure you want to borrow this book?')) {
+                return;
+            }
+
+            // Find the button that was clicked
+            const button = event.target;
+            const originalText = button.textContent;
+            
+            // Show loading state
+            button.disabled = true;
+            button.textContent = 'Borrowing...';
+            button.classList.add('loading');
+
+            try {
+                const response = await fetch(`/borrowing/borrow/${bookId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Show success message
+                    showMessage(`${result.message}\nDue date: ${result.dueDate}`, 'success');
+                    
+                    // Update button state
+                    button.textContent = 'Borrowed';
+                    button.style.background = '#28a745';
+                    
+                    setTimeout(() => {
+                        location.reload(); // Refresh to update availability
+                    }, 1500);
+                } else {
+                    showMessage(result.error || 'Error borrowing book', 'error');
+                    // Reset button
+                    button.disabled = false;
+                    button.textContent = originalText;
+                    button.classList.remove('loading');
+                }
+            } catch (error) {
+                console.error('Error borrowing book:', error);
+                showMessage('Error borrowing book. Please try again.', 'error');
+                // Reset button
+                button.disabled = false;
+                button.textContent = originalText;
+                button.classList.remove('loading');
+            }
+        }
+
+        function showMessage(message, type) {
+            // Remove existing messages
+            const existingMessages = document.querySelectorAll('.alert-message');
+            existingMessages.forEach(msg => msg.remove());
+            
+            // Create new message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-message`;
+            messageDiv.style.position = 'fixed';
+            messageDiv.style.top = '130px';
+            messageDiv.style.right = '20px';
+            messageDiv.style.zIndex = '9999';
+            messageDiv.style.minWidth = '300px';
+            messageDiv.textContent = message;
+            
+            document.body.appendChild(messageDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchTitle').value.toLowerCase();
+            const categoryFilter = document.getElementById('filterCategory').value;
+            const availabilityFilter = document.getElementById('filterAvailability').value;
+            
+            const bookCards = document.querySelectorAll('.book-card');
+            let visibleCount = 0;
+            
+            bookCards.forEach(card => {
+                const title = card.dataset.title;
+                const author = card.dataset.author;
+                const category = card.dataset.category;
+                const available = card.dataset.available === 'true';
+                
+                let shouldShow = true;
+                
+                // Search filter
+                if (searchTerm && !title.includes(searchTerm) && !author.includes(searchTerm)) {
+                    shouldShow = false;
+                }
+                
+                // Category filter
+                if (categoryFilter && category !== categoryFilter) {
+                    shouldShow = false;
+                }
+                
+                // Availability filter
+                if (availabilityFilter === 'available' && !available) {
+                    shouldShow = false;
+                } else if (availabilityFilter === 'unavailable' && available) {
+                    shouldShow = false;
+                }
+                
+                if (shouldShow) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Update stats
+            const statsBar = document.querySelector('.stats-bar');
+            statsBar.innerHTML = `<strong>${visibleCount} books shown</strong>`;
+        }
+        
+        // Real-time search
+        document.getElementById('searchTitle').addEventListener('input', applyFilters);
+        document.getElementById('filterCategory').addEventListener('change', applyFilters);
+        document.getElementById('filterAvailability').addEventListener('change', applyFilters);
+    </script>
+</body>
+</html>

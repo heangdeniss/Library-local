@@ -1,19 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Add click event to home pages
-    document.querySelectorAll('.menu-item').forEach(item => {
+    // Add click event to book category items
+    document.querySelectorAll('.book-item').forEach(item => {
         item.addEventListener('click', () => {
             const url = item.getAttribute('data-url');
             if (url) {
+                // Add visual feedback before redirect
+                item.style.opacity = '0.7';
                 window.location.href = url;
             }
+        });
+        
+        // Add hover effect for better UX
+        item.addEventListener('mouseenter', () => {
+            item.style.cursor = 'pointer';
         });
     });
 
     // Handle the Return Button
     const returnButton = document.getElementById('returnButton');
-    returnButton.addEventListener('click', () => {
-        window.location.href = '/'; // Navigate to the index page
-    });
+    if (returnButton) {
+        returnButton.addEventListener('click', () => {
+            window.location.href = '/'; // Navigate to the index page
+        });
+    }
 });
 
 const header = document.querySelector('.header');
