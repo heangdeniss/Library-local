@@ -214,6 +214,94 @@ app.get('/logout', (req, res) => {
     });
 });
 
+// Forgot password routes
+app.get('/forgot-password', (req, res) => {
+    res.render('forgot-password.ejs');
+});
+
+app.post('/forgot-password', async (req, res) => {
+    const { email, oldPassword, newPassword, confirmPassword } = req.body;
+    
+    // Validate input
+    if (!email || !oldPassword || !newPassword || !confirmPassword) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'All fields are required' 
+        });
+    }
+
+    // Check if new passwords match
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'New passwords do not match' 
+        });
+    }
+
+    // Check password length
+    if (newPassword.length < 6) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'New password must be at least 6 characters long' 
+        });
+    }
+
+    // Check if old and new passwords are different
+    if (oldPassword === newPassword) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'New password must be different from current password' 
+        });
+    }
+
+    try {
+        // Check if user exists
+        const userResults = await query('SELECT * FROM users WHERE email = $1', [email]);
+        
+        if (userResults.length === 0) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'No account found with this email address' 
+            });
+        }
+
+        const user = userResults[0];
+
+        // Verify old password
+        const isOldPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+        
+        if (!isOldPasswordMatch) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Current password is incorrect' 
+            });
+        }
+
+        // Hash new password
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        
+        // Update password in database
+        await query(
+            'UPDATE users SET password = $1, updated_at = CURRENT_TIMESTAMP WHERE email = $2',
+            [hashedNewPassword, email]
+        );
+
+        console.log('Password updated successfully for user:', email);
+        
+        return res.status(200).json({ 
+            success: true, 
+            message: 'Password updated successfully! You will be redirected to login.' 
+        });
+        
+    } catch (err) {
+        console.error('Error updating password:', err);
+        return res.status(500).json({ 
+            success: false, 
+            message: 'Error updating password. Please try again.' 
+        });
+    }
+});
+
 // Show books by category
 app.get('/analysis-statistic', requireAuth, async (req, res) => {
     try {
@@ -256,30 +344,90 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/books", (req, res) => {
-  res.render("books.ejs");
+  const isLoggedIn = req.session && req.session.userId;
+  const userData = isLoggedIn ? {
+    userId: req.session.userId,
+    username: req.session.username,
+    email: req.session.email
+  } : null;
+  
+  res.render("books.ejs", {
+    isLoggedIn: isLoggedIn,
+    user: userData
+  });
 });
 
 
 
 app.get("/quote", (req, res) => {
-  res.render("quote.ejs");
+  const isLoggedIn = req.session && req.session.userId;
+  const userData = isLoggedIn ? {
+    userId: req.session.userId,
+    username: req.session.username,
+    email: req.session.email
+  } : null;
+  
+  res.render("quote.ejs", {
+    isLoggedIn: isLoggedIn,
+    user: userData
+  });
 });
 
 app.get("/contact", (req, res) => {
-  res.render("contact.ejs");
+  const isLoggedIn = req.session && req.session.userId;
+  const userData = isLoggedIn ? {
+    userId: req.session.userId,
+    username: req.session.username,
+    email: req.session.email
+  } : null;
+  
+  res.render("contact.ejs", { 
+    isLoggedIn: isLoggedIn,
+    user: userData
+  });
 });
 
 // Legal and informational pages
 app.get("/about", (req, res) => {
-  res.render("about.ejs");
+  const isLoggedIn = req.session && req.session.userId;
+  const userData = isLoggedIn ? {
+    userId: req.session.userId,
+    username: req.session.username,
+    email: req.session.email
+  } : null;
+  
+  res.render("about.ejs", {
+    isLoggedIn: isLoggedIn,
+    user: userData
+  });
 });
 
 app.get("/privacy-policy", (req, res) => {
-  res.render("privacy-policy.ejs");
+  const isLoggedIn = req.session && req.session.userId;
+  const userData = isLoggedIn ? {
+    userId: req.session.userId,
+    username: req.session.username,
+    email: req.session.email
+  } : null;
+  
+  res.render("privacy-policy.ejs", {
+    isLoggedIn: isLoggedIn,
+    user: userData
+  });
 });
 
 app.get("/terms-of-service", (req, res) => {
-  res.render("terms-of-service.ejs");
+  const isLoggedIn = req.session && req.session.userId;
+  const userData = isLoggedIn ? {
+    userId: req.session.userId,
+    username: req.session.username,
+    email: req.session.email
+  } : null;
+  
+  res.render("terms-of-service.ejs", {
+    isLoggedIn: isLoggedIn,
+    user: userData
+  });
 });
 
 app.get("/book1", requireAuth, (req, res) => {
