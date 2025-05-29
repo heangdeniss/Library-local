@@ -1,7 +1,3 @@
--- Database setup for Library Management System
--- Run this script in your PostgreSQL database
-
--- Create database (run this separately if needed)
 -- CREATE DATABASE "Library";
 
 -- Connect to the Library database before running the following commands
@@ -68,10 +64,10 @@ CREATE TABLE IF NOT EXISTS borrowing_settings (
 
 -- Insert default borrowing settings
 INSERT INTO borrowing_settings (setting_name, setting_value, description) VALUES
-('default_borrow_days', '14', 'Default number of days a book can be borrowed'),
-('max_books_per_user', '5', 'Maximum number of books a user can borrow at once'),
-('fine_per_day', '0.50', 'Fine amount per day for overdue books'),
-('renewal_limit', '2', 'Maximum number of times a book can be renewed')
+-- ('default_borrow_days', '14', 'Default number of days a book can be borrowed'),
+-- ('max_books_per_user', '5', 'Maximum number of books a user can borrow at once'),
+-- ('fine_per_day', '0.50', 'Fine amount per day for overdue books'),
+-- ('renewal_limit', '2', 'Maximum number of times a book can be renewed')
 ON CONFLICT (setting_name) DO NOTHING;
 
 -- Create contact messages table for client inquiries

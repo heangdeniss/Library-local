@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= book.title %> | PDF Preview</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title><%= book.title %> | PDF Preview</title>    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/styles/pdf-viewer.css">
     <link rel="stylesheet" href="/styles/sub.css">
     <!-- PDF.js library -->
@@ -119,10 +119,35 @@
             max-width: 100%;
             height: auto;
         }
-        
-        .disabled-controls {
+          .disabled-controls {
             opacity: 0.5;
             pointer-events: none;
+        }
+        
+        .preview-badge {
+            background: #e74c3c;
+            color: white;
+            font-size: 0.8rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+        
+        .loading-indicator {
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        /* Add some visual emphasis to the page limitation notice */
+        .page-restriction {
+            background: #fff3cd;
+            border-left: 4px solid #f39c12;
+            padding: 12px 15px;
+            margin: 15px 0;
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -150,10 +175,7 @@
             <!-- Page Restriction Notice -->
             <div class="page-restriction">
                 <strong>Preview Limitation:</strong> You can only view the first 3 pages. Borrow the book to read all pages.
-            </div>
-
-            <!-- PDF.js Controls -->
-            <div class="pdf-controls" id="pdf-js-controls">
+            </div>            // PDF.js Controls -->            <div class="pdf-controls" id="pdf-js-controls">
                 <div class="page-navigation">
                     <button id="prev" class="nav-btn">Previous</button>
                     <span id="page-info">Page <span id="page-num">1</span> of <span id="page-count">0</span></span>
@@ -165,7 +187,8 @@
                     <button id="zoom-in" class="zoom-btn">+</button>
                 </div>
                 <div class="view-mode">
-                    <button id="fullscreen-btn" class="mode-btn">Fullscreen</button>
+                    <button id="fullscreen-btn" class="mode-btn"><i class="bi bi-fullscreen"></i> Fullscreen</button>
+                    <button id="all-pages-btn" class="mode-btn"><i class="bi bi-grid-3x3-gap"></i> Show All Preview Pages</button>
                 </div>
             </div>
 
@@ -174,6 +197,7 @@
                 <div id="pdf-js-view" class="pdf-viewer">
                     <canvas id="pdf-canvas"></canvas>
                     <div id="pdf-loading" class="loading-indicator">Loading PDF preview...</div>
+                    <div id="multi-page-view" style="display: none;"></div>
                 </div>
                 
                 <!-- Fallback native browser viewer (hidden by default) -->
@@ -192,9 +216,9 @@
         </div>
     </div>
     
-    <script>
-        // PDF.js implementation with preview restrictions
+    <script>        // PDF.js implementation with preview restrictions
         const url = '/preview-pdf/<%= book.id %>';
+        const bookId = '<%= book.id %>'; // Store book ID for borrowing
         let pdfDoc = null;
         let pageNum = 1;
         let pageRendering = false;
@@ -205,8 +229,12 @@
         const maxPreviewPages = 3; // Limit for preview mode
         
         console.log('Attempting to load PDF preview from:', url);
-        
-        /**
+        console.log('Book details:', {
+            id: '<%= book.id %>',
+            title: '<%= book.title %>',
+            filePath: '<%= book.file_path %>'
+        });
+          /**
          * Get page info from document, resize canvas accordingly, and render page.
          * @param num Page number.
          */
@@ -238,6 +266,19 @@
                 // Wait for rendering to finish
                 renderTask.promise.then(function() {
                     pageRendering = false;
+                    
+                    // Add watermark for preview pages
+                    if (num === maxPreviewPages) {
+                        ctx.save();
+                        ctx.globalAlpha = 0.1;
+                        ctx.font = '24px Arial';
+                        ctx.fillStyle = '#333';
+                        ctx.translate(canvas.width - 100, canvas.height - 50);
+                        ctx.rotate(-Math.PI / 6);
+                        ctx.fillText('PREVIEW ONLY', 0, 0);
+                        ctx.restore();
+                    }
+                    
                     if (pageNumPending !== null) {
                         // New page rendering is pending
                         renderPage(pageNumPending);
@@ -281,12 +322,85 @@
             pageNum++;
             queueRenderPage(pageNum);
         }
-        
-        /**
+          /**
          * Show borrow prompt when trying to access restricted pages
          */
         function showBorrowPrompt() {
-            alert('This is a preview mode. To read beyond page 3, please borrow this book!');
+            // Create or use existing borrow prompt overlay
+            let borrowPrompt = document.getElementById('borrow-prompt-overlay');
+            
+            if (!borrowPrompt) {
+                borrowPrompt = document.createElement('div');
+                borrowPrompt.id = 'borrow-prompt-overlay';
+                borrowPrompt.innerHTML = `
+                    <div class="borrow-prompt">
+                        <div class="borrow-prompt-icon">🔒</div>
+                        <h3>Preview Limit Reached</h3>
+                        <p>You've reached the 3-page preview limit for this book.</p>
+                        <p>Borrow this book to access all ${pdfDoc.numPages} pages with full features!</p>
+                        <button class="borrow-now-btn" onclick="borrowBook('${bookId}')">Borrow Now</button>
+                        <button class="close-prompt-btn" onclick="document.getElementById('borrow-prompt-overlay').style.display='none'">Close</button>
+                    </div>
+                `;
+                document.body.appendChild(borrowPrompt);
+                
+                // Add styles for the prompt
+                const style = document.createElement('style');
+                style.textContent = `
+                    #borrow-prompt-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,0.7);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 1000;
+                    }
+                    .borrow-prompt {
+                        background: white;
+                        padding: 30px;
+                        border-radius: 10px;
+                        text-align: center;
+                        max-width: 400px;
+                        box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+                    }
+                    .borrow-prompt-icon {
+                        font-size: 40px;
+                        margin-bottom: 15px;
+                    }
+                    .borrow-prompt h3 {
+                        margin: 0 0 15px;
+                        color: #333;
+                    }
+                    .borrow-prompt p {
+                        margin: 0 0 20px;
+                        color: #666;
+                    }
+                    .borrow-now-btn {
+                        background: #28a745;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        font-weight: bold;
+                        cursor: pointer;
+                        margin-right: 10px;
+                    }
+                    .close-prompt-btn {
+                        background: #f8f9fa;
+                        border: 1px solid #ddd;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                    }
+                `;
+                document.head.appendChild(style);
+            } else {
+                borrowPrompt.style.display = 'flex';
+            }
         }
         
         /**
@@ -340,8 +454,7 @@
             
             console.log('Switched to native PDF viewer for preview');
         }
-        
-        // Try to load with PDF.js first
+          // Try loading with PDF.js first
         const loadPdfWithPdfJs = () => {
             // Show the loading indicator
             document.getElementById('pdf-loading').style.display = 'block';
@@ -349,6 +462,7 @@
             // Check if URL is valid
             if (!url || url === '/undefined' || url === '/null') {
                 console.error('Invalid PDF URL:', url);
+                document.getElementById('pdf-loading').innerHTML = 'Error: Could not load PDF. Invalid URL.';
                 switchToNativePdfViewer();
                 return;
             }
@@ -372,16 +486,28 @@
                 // Hide loading indicator
                 document.getElementById('pdf-loading').style.display = 'none';
                 
+                // Add a visual cue that there are more pages if applicable
+                if (pdfDoc.numPages > maxPreviewPages) {
+                    const pageInfo = document.getElementById('page-info');
+                    pageInfo.innerHTML += `<span class="preview-badge"> (${pdfDoc.numPages - maxPreviewPages} more pages locked)</span>`;
+                    
+                    // Update the page restriction notice with exact count
+                    const pageRestriction = document.querySelector('.page-restriction');
+                    if (pageRestriction) {
+                        pageRestriction.innerHTML = `<strong>Preview Limitation:</strong> You can only view the first ${maxPreviewPages} pages of ${pdfDoc.numPages} total pages. Borrow the book to read all pages.`;
+                    }
+                }
+                
                 console.log('PDF preview successfully loaded with PDF.js');
             }).catch(function(error) {
                 console.error('Error loading PDF preview with PDF.js:', error);
+                document.getElementById('pdf-loading').innerHTML = 'Error loading PDF preview. Please try again later.';
                 
                 // Switch to native PDF viewer as fallback
                 switchToNativePdfViewer();
             });
         };
-        
-        // Start loading with PDF.js
+          // Start loading with PDF.js
         loadPdfWithPdfJs();
         
         // Button event listeners
@@ -390,6 +516,7 @@
         document.getElementById('zoom-in').addEventListener('click', zoomIn);
         document.getElementById('zoom-out').addEventListener('click', zoomOut);
         document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
+        document.getElementById('all-pages-btn').addEventListener('click', showAllPreviewPages);
         
         // Keyboard navigation
         document.addEventListener('keydown', function(e) {
@@ -399,6 +526,114 @@
                 onPrevPage();
             }
         });
+        
+        /**
+         * Shows all preview pages at once (up to 3)
+         */
+        function showAllPreviewPages() {
+            // Hide the single canvas view and controls
+            document.getElementById('pdf-canvas').style.display = 'none';
+            document.getElementById('page-info').style.display = 'none';
+            document.getElementById('prev').style.display = 'none';
+            document.getElementById('next').style.display = 'none';
+            document.getElementById('all-pages-btn').textContent = 'Single Page View';
+            document.getElementById('all-pages-btn').onclick = showSinglePageView;
+            
+            // Show the multi-page container
+            const multiPageView = document.getElementById('multi-page-view');
+            multiPageView.style.display = 'block';
+            multiPageView.innerHTML = ''; // Clear any existing content
+            
+            // Create page indicator
+            const pageIndicator = document.createElement('div');
+            pageIndicator.className = 'page-indicator';
+            pageIndicator.innerHTML = `<strong>Preview:</strong> Showing ${Math.min(pdfDoc.numPages, maxPreviewPages)} of ${pdfDoc.numPages} total pages`;
+            multiPageView.appendChild(pageIndicator);
+            
+            // Render each preview page
+            for (let i = 1; i <= Math.min(pdfDoc.numPages, maxPreviewPages); i++) {
+                const pageContainer = document.createElement('div');
+                pageContainer.className = 'preview-page-container';
+                
+                const pageCanvas = document.createElement('canvas');
+                pageCanvas.id = `page-canvas-${i}`;
+                pageCanvas.className = 'preview-page-canvas';
+                
+                const pageNumber = document.createElement('div');
+                pageNumber.className = 'preview-page-number';
+                pageNumber.textContent = `Page ${i} of ${pdfDoc.numPages}`;
+                
+                pageContainer.appendChild(pageCanvas);
+                pageContainer.appendChild(pageNumber);
+                multiPageView.appendChild(pageContainer);
+                
+                // Render this page on its canvas
+                renderMultiPagePreview(i, pageCanvas);
+            }
+            
+            // Add a "locked pages" indicator if there are more pages
+            if (pdfDoc.numPages > maxPreviewPages) {
+                const lockedPagesIndicator = document.createElement('div');
+                lockedPagesIndicator.className = 'locked-pages-indicator';
+                lockedPagesIndicator.innerHTML = `
+                    <div class="locked-icon">🔒</div>
+                    <div class="locked-text">
+                        <h4>${pdfDoc.numPages - maxPreviewPages} more pages locked</h4>
+                        <p>Borrow this book to access all pages</p>
+                        <button class="borrow-btn-small" onclick="borrowBook('${bookId}')">Borrow Now</button>
+                    </div>
+                `;
+                multiPageView.appendChild(lockedPagesIndicator);
+            }
+        }
+        
+        /**
+         * Returns to single page view
+         */
+        function showSinglePageView() {
+            document.getElementById('pdf-canvas').style.display = 'block';
+            document.getElementById('page-info').style.display = 'inline';
+            document.getElementById('prev').style.display = 'inline-block';
+            document.getElementById('next').style.display = 'inline-block';
+            document.getElementById('multi-page-view').style.display = 'none';
+            document.getElementById('all-pages-btn').textContent = 'Show All Preview Pages';
+            document.getElementById('all-pages-btn').onclick = showAllPreviewPages;
+            
+            // Make sure the current page is rendered
+            renderPage(pageNum);
+        }
+        
+        /**
+         * Renders a page for the multi-page preview
+         */
+        function renderMultiPagePreview(pageNum, canvas) {
+            pdfDoc.getPage(pageNum).then(function(page) {
+                const ctx = canvas.getContext('2d');
+                // Use a fixed scale for the preview pages
+                const viewport = page.getViewport({scale: 0.8});
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                
+                page.render(renderContext).promise.then(function() {
+                    // Add watermark for last preview page
+                    if (pageNum === maxPreviewPages) {
+                        ctx.save();
+                        ctx.globalAlpha = 0.1;
+                        ctx.font = '24px Arial';
+                        ctx.fillStyle = '#333';
+                        ctx.translate(canvas.width - 100, canvas.height - 50);
+                        ctx.rotate(-Math.PI / 6);
+                        ctx.fillText('PREVIEW ONLY', 0, 0);
+                        ctx.restore();
+                    }
+                });
+            });
+        }
         
         // Borrow book function
         async function borrowBook(bookId) {

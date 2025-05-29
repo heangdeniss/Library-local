@@ -667,11 +667,12 @@ app.get('/view-pdf/:id', requireAuth, async (req, res) => {
         
         const hasBorrowed = borrowedResult.length > 0;
         console.log(`User has borrowed this book: ${hasBorrowed}`);
+          // Verify file exists
+        const fullPath = path.join(__dirname, 'public', book.file_path.replace(/\\/g, path.sep).replace(/\//g, path.sep));
         
-        // Verify file exists
-        const fullPath = path.join(__dirname, 'public', book.file_path);
         if (!fs.existsSync(fullPath)) {
             console.error(`PDF file not found at ${fullPath}`);
+            return res.status(404).send('PDF file not found');
         } else {
             console.log(`PDF file exists at ${fullPath}`);
         }
@@ -783,20 +784,31 @@ app.get('/serve-pdf/:id', requireAuth, async (req, res) => {
         if (!hasBorrowed) {
             return res.redirect(`/preview-pdf/${bookId}`);
         }
-        
-        // Build the full path - handle both Windows and Unix paths
+          // Build the full path - handle both Windows and Unix paths
         const fullPath = path.join(__dirname, 'public', book.file_path.replace(/\\/g, path.sep).replace(/\//g, path.sep));
         console.log(`Attempting to serve PDF from: ${fullPath}`);
         
         if (!fs.existsSync(fullPath)) {
             console.error(`PDF file not found at ${fullPath}`);
-            return res.status(404).send(`PDF file not found. Path: ${fullPath}`);
+            console.error(`Original file path from database: ${book.file_path}`);
+            return res.status(404).send('PDF file not found. Please contact support.');
         }
         
         console.log(`PDF file exists, serving: ${fullPath}`);
+        console.log(`Book details: Title: ${book.title}, ID: ${book.id}, Full access: yes`);
         
-        // Send the file directly using Express's sendFile
-        res.sendFile(fullPath);
+        // Send the file directly using Express's sendFile with better error handling
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.sendFile(fullPath, (err) => {
+            if (err) {
+                console.error('Error sending full PDF file:', err);
+                console.error(`Error details: ${err.message}`);
+                res.status(500).send('Error serving PDF. Please try again later.');
+            } else {
+                console.log('Full PDF sent successfully');
+            }
+        });
         
     } catch (err) {
         console.error('Error serving PDF:', err);
@@ -831,18 +843,30 @@ app.get('/preview-pdf/:id', requireAuth, async (req, res) => {
         if (hasBorrowed) {
             return res.redirect(`/serve-pdf/${bookId}`);
         }
-        
-        const fullPath = path.join(__dirname, 'public', book.file_path.replace(/\\/g, path.sep).replace(/\//g, path.sep));
-        
-        if (!fs.existsSync(fullPath)) {
-            return res.status(404).send('PDF file not found');
+          const fullPath = path.join(__dirname, 'public', book.file_path.replace(/\\/g, path.sep).replace(/\//g, path.sep));
+          if (!fs.existsSync(fullPath)) {
+            console.error(`PDF file not found at: ${fullPath}`);
+            console.error(`Original file path from database: ${book.file_path}`);
+            return res.status(404).send('PDF file not found. Please contact support.');
         }
+        
+        console.log(`Serving PDF preview from: ${fullPath}`);
+        console.log(`Book details: Title: ${book.title}, ID: ${book.id}, Preview mode: enabled`);
         
         // For preview, we'll serve the file with a special header
         // The client-side JavaScript will handle limiting the pages
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('X-Preview-Mode', 'true');
-        res.sendFile(fullPath);
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.sendFile(fullPath, (err) => {
+            if (err) {
+                console.error('Error sending PDF file:', err);
+                console.error(`Error details: ${err.message}`);
+                res.status(500).send('Error serving PDF preview. Please try again later.');
+            } else {
+                console.log('PDF preview sent successfully');
+            }
+        });
         
     } catch (err) {
         console.error('Error serving PDF preview:', err);
